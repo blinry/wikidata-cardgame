@@ -58,7 +58,7 @@ function buildDeck(data) {
     }
 
     propertiesSorted = propertiesSorted.sort((a,b) => b[1] - a[1]);
-    //propertiesSorted = propertiesSorted.sort((a,b) => Math.random());
+    //propertiesSorted = propertiesSorted.sort((a,b) => Math.random()+0.01);
 
 
     propertiesSorted = propertiesSorted.slice(0, NUM_PROPERTIES);
@@ -135,11 +135,18 @@ wd:Q1032372 // hackspaces
 wd:Q11344 // chemical elements
 wd:Q5119 // capitals
 wd:Q6256 // countries
+wd:Q55990535 // computer models
+wd:Q142714 // cards games
+retro games
+// politiker
+wd:Q16873378 // himmelskörper
 */
+
+  //?item wdt:P31/wdt:P279* wd:Q1130645.
 
 const query = `
 SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
-  ?item wdt:P31/wdt:P279* wd:Q5119.
+  ?item wdt:P39 wd:Q11696.
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
   OPTIONAL { ?item wdt:P18 ?image. }
   ?item ?p ?statement.

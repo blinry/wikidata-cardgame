@@ -43,7 +43,7 @@ function genCard(data){
                 var rasterimg = new Raster(img.id);
                 var imgsize = rasterimg.size;
                 var scaleimg = 1;
-                if(imgsize.width<imgsize.height){
+                if(imgsize.width/imgsize.height < rect.width/rect.height){
                     scaleimg = rect.width/imgsize.width;
                 }else{
                     scaleimg = rect.height/imgsize.height;
