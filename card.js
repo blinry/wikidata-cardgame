@@ -66,27 +66,29 @@ function genCard(data){
             title.fillColor = 'black';
             title.content = data.label.capitalize();
             title.fontSize = 30;
-            if(data.description.length<45){
-                var description = new PointText(titlebox.bounds.center.add([0,30]));
-                description.justification = 'center';
-                description.fillColor = 'black';
-                description.content = data.description.capitalize();
-                description.fontSize = 15;
-            }else{
-                var spl = data.description.substring(0, 45).lastIndexOf(' ');
-                console.log(spl);
-                var desc1 = data.description.substring(0, spl);
-                var desc2 = data.description.substring(spl);
-                var description = new PointText(titlebox.bounds.center.add([0,20]));
-                description.justification = 'center';
-                description.fillColor = 'black';
-                description.content = desc1.capitalize();
-                description.fontSize = 15;
-                var description2 = new PointText(titlebox.bounds.center.add([0,40]));
-                description2.justification = 'center';
-                description2.fillColor = 'black';
-                description2.content = desc2;
-                description2.fontSize = 15;
+            if(data.description){
+                if(data.description.length<45){
+                    var description = new PointText(titlebox.bounds.center.add([0,30]));
+                    description.justification = 'center';
+                    description.fillColor = 'black';
+                    description.content = data.description.capitalize();
+                    description.fontSize = 15;
+                }else{
+                    var spl = data.description.substring(0, 45).lastIndexOf(' ');
+                    console.log(spl);
+                    var desc1 = data.description.substring(0, spl);
+                    var desc2 = data.description.substring(spl);
+                    var description = new PointText(titlebox.bounds.center.add([0,20]));
+                    description.justification = 'center';
+                    description.fillColor = 'black';
+                    description.content = desc1.capitalize();
+                    description.fontSize = 15;
+                    var description2 = new PointText(titlebox.bounds.center.add([0,40]));
+                    description2.justification = 'center';
+                    description2.fillColor = 'black';
+                    description2.content = desc2;
+                    description2.fontSize = 15;
+                }
             }
             var qnr = new PointText([63*7-30, 88*7-10]);
             qnr.justification = 'right';
