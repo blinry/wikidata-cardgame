@@ -66,11 +66,13 @@ function genCard(data){
             title.fillColor = 'black';
             title.content = data.label.capitalize();
             title.fontSize = 30;
-            var description = new PointText(titlebox.bounds.center.add([0,30]));
-            description.justification = 'center';
-            description.fillColor = 'black';
-            description.content = data.description.capitalize();
-            description.fontSize = 15;
+            if (data.description) {
+                var description = new PointText(titlebox.bounds.center.add([0,30]));
+                description.justification = 'center';
+                description.fillColor = 'black';
+                description.content = data.description.capitalize();
+                description.fontSize = 15;
+            }
             var qnr = new PointText([63*7-30, 88*7-10]);
             qnr.justification = 'right';
             qnr.fillColor = 'black';

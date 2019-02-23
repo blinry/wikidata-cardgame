@@ -1,6 +1,21 @@
 const NUM_PROPERTIES = 5;
 
-// 1772-01-01T00:00:00Z
+function ordinal(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
+// input format: 1772-01-01T00:00:00Z
 function formatDate(date, precision) {
     if (precision >= 11) {
         return date.substring(0, 10);
@@ -11,7 +26,7 @@ function formatDate(date, precision) {
     } else if (precision == 8) {
         return date.substring(0, 3)+"0s";
     } else if (precision == 7) {
-        return (parseInt(date.substring(0, 2))+1)+"th century";
+        return ordinal(parseInt(date.substring(0, 2))+1)+" century";
     } else {
         return "a long time ago";
     }
@@ -65,9 +80,12 @@ function buildDeck(data) {
             }
             if (line.item.value in items) {
             } else {
-                items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, description: line.itemDescription.value, properties: {}};
+                items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: {}};
                 if (line.image) {
                     items[line.item.value].image = line.image.value;
+                }
+                if (line.itemDescription) {
+                    items[line.item.value].description = line.itemDescription.value;
                 }
             }
             items[line.item.value].properties[line.propLabel.value] = {property: line.propLabel.value, value: value};
@@ -97,9 +115,16 @@ function buildDeck(data) {
     return it;
 }
 
+/*
+wd:Q1032372 // hackspaces
+wd:Q11344 // chemical elements
+wd:Q5119 // capitals
+wd:Q6256 // countries
+*/
+
 const query = `
 SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
-  ?item wdt:P31/wdt:P279* wd:Q11344.
+  ?item wdt:P31/wdt:P279* wd:Q5119.
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
   OPTIONAL { ?item wdt:P18 ?image. }
   ?item ?p ?statement.
