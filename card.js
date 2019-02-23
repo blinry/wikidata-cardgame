@@ -58,19 +58,36 @@ function genCard(data){
             var border = outerborder.subtract(innerBorder);
             border.fillColor = 'white';
             
-            var titlebox = new Path.Rectangle([0,rect.height/8], new Size(rect.width,100));
+            var titlebox = new Path.Rectangle([0,rect.height/8], new Size(rect.width,120));
             titlebox.fillColor = 'white';
-            titlebox.opacity = 0.7;
-            var title = new PointText(titlebox.bounds.center);
+            titlebox.opacity = 0.8;
+            var title = new PointText(titlebox.bounds.center.subtract([0,10]));
             title.justification = 'center';
             title.fillColor = 'black';
             title.content = data.label.capitalize();
             title.fontSize = 30;
-            var description = new PointText(titlebox.bounds.center.add([0,30]));
-            description.justification = 'center';
-            description.fillColor = 'black';
-            description.content = data.description.capitalize();
-            description.fontSize = 15;
+            if(data.description.length<45){
+                var description = new PointText(titlebox.bounds.center.add([0,30]));
+                description.justification = 'center';
+                description.fillColor = 'black';
+                description.content = data.description.capitalize();
+                description.fontSize = 15;
+            }else{
+                var spl = data.description.substring(0, 45).lastIndexOf(' ');
+                console.log(spl);
+                var desc1 = data.description.substring(0, spl);
+                var desc2 = data.description.substring(spl);
+                var description = new PointText(titlebox.bounds.center.add([0,20]));
+                description.justification = 'center';
+                description.fillColor = 'black';
+                description.content = desc1.capitalize();
+                description.fontSize = 15;
+                var description2 = new PointText(titlebox.bounds.center.add([0,40]));
+                description2.justification = 'center';
+                description2.fillColor = 'black';
+                description2.content = desc2;
+                description2.fontSize = 15;
+            }
             var qnr = new PointText([63*7-30, 88*7-10]);
             qnr.justification = 'right';
             qnr.fillColor = 'black';
@@ -83,7 +100,7 @@ function genCard(data){
                 
                 var propbox = new Path.Rectangle([0,rect.height*(10-i)/12 + 20], new Size(rect.width,40));
                 propbox.fillColor = 'white';
-                propbox.opacity = 0.7;
+                propbox.opacity = 0.8;
                 var prop = new PointText([40,rect.height*(10-i)/12 + 48]);
                 prop.fillColor = 'black';
                 prop.content = data.properties[property].property.capitalize();
