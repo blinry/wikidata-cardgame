@@ -1,4 +1,4 @@
-const NUM_PROPERTIES = 3;
+const NUM_PROPERTIES = 5;
 
 function buildDeck(data) {
     // Step 1: Get good property candidates.
@@ -17,12 +17,12 @@ function buildDeck(data) {
         propertiesSorted.push([property, propertiesCount[property].count, propertiesCount[property].label]);
     }
 
-    //propertiesSorted = propertiesSorted.sort((a,b) => b[1] - a[1]);
-    propertiesSorted = propertiesSorted.sort((a,b) => Math.random());
+    propertiesSorted = propertiesSorted.sort((a,b) => b[1] - a[1]);
+    //propertiesSorted = propertiesSorted.sort((a,b) => Math.random());
 
 
     propertiesSorted = propertiesSorted.slice(0, NUM_PROPERTIES);
-    console.log(propertiesSorted);
+    //console.log(propertiesSorted);
 
     // Step 2: Get items which have all these properties.
     let items = {};
@@ -41,19 +41,32 @@ function buildDeck(data) {
                 value += " "+line.unitLabel.value;
             }
             if (line.item.value in items) {
-                items[line.item.value].properties.push({property: line.propLabel.value, value: value});
             } else {
-                items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: [{property: line.propLabel.value, value: value}]};
+                items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: {}};
             }
+            items[line.item.value].properties[line.propLabel.value] = {property: line.propLabel.value, value: value};
         }
     }
 
+    //console.log(items);
+
     let it = [];
     for (let item in items) {
-        it.push(items[item]);
+        let i = items[item];
+        i.known_properties = Object.keys(i.properties).length;
+        for (let property of propertiesSorted) {
+            //console.log(i);
+            if (property[2] in i.properties) {
+            } else {
+                i.properties[property[2]] = {property: property[2], value: "-"};
+            }
+        }
+        it.push(i);
     }
+    it.sort((a,b) => a.valid_count - b.valid_count);
 
-    it = it.filter(item => item.properties.length == NUM_PROPERTIES);
+    it.sort((a,b) => b.known_properties - a.known_properties);
+    //it = it.filter(item => item.properties.length == NUM_PROPERTIES);
 
     return it;
 }
@@ -101,8 +114,8 @@ window.fetch(url).then(
             for (let card of deck) {
                 console.log(" ");
                 console.log(card.label);
-                for (let property of card.properties) {
-                    console.log(property.property+": "+property.value);
+                for (let property in card.properties) {
+                    console.log(card.properties[property].property+": "+card.properties[property].value);
                 }
             }
 
