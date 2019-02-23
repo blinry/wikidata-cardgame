@@ -32,6 +32,14 @@ function formatDate(date, precision) {
     }
 }
 
+function unitSimplify(text){
+    text = text.replace('square kilometre','km^2');
+    text = text.replace('square metre','m^2');
+    text = text.replace('centimetre','cm');
+    text = text.replace('metre','m');
+    return text;
+}
+
 function buildDeck(data) {
     // Step 1: Get good property candidates.
     let propertiesCount = {};
@@ -75,7 +83,7 @@ function buildDeck(data) {
             } else {
                 value = line.valueLabel.value;
                 if (line.unitLabel && line.unitLabel.value != "1") {
-                    value += " "+line.unitLabel.value;
+                    value += " "+unitSimplify(line.unitLabel.value); 
                 }
             }
             if (line.item.value in items) {
