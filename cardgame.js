@@ -98,13 +98,20 @@ function buildDeck(data) {
     for (let item in items) {
         let i = items[item];
         i.known_properties = Object.keys(i.properties).length;
+
+        let props = [];
+
         for (let property of propertiesSorted) {
             //console.log(i);
             if (property[2] in i.properties) {
             } else {
                 i.properties[property[2]] = {property: property[2], value: "-"};
             }
+            props.push(i.properties[property[2]]);
         }
+
+        i.properties = props;
+        console.log(it);
         it.push(i);
     }
     it.sort((a,b) => a.valid_count - b.valid_count);
