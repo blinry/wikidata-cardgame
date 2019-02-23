@@ -42,7 +42,10 @@ function buildDeck(data) {
             }
             if (line.item.value in items) {
             } else {
-                items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: {}};
+                items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, description: line.itemDescription.value, properties: {}};
+                if (line.image) {
+                    items[line.item.value].image = line.image.value;
+                }
             }
             items[line.item.value].properties[line.propLabel.value] = {property: line.propLabel.value, value: value};
         }
@@ -66,15 +69,16 @@ function buildDeck(data) {
     it.sort((a,b) => a.valid_count - b.valid_count);
 
     it.sort((a,b) => b.known_properties - a.known_properties);
-    //it = it.filter(item => item.properties.length == NUM_PROPERTIES);
+    it = it.slice(0, 32);
 
     return it;
 }
 
 const query = `
-SELECT ?item ?itemLabel ?image ?property ?propLabel ?valueLabel ?unitLabel WHERE {
+SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel WHERE {
   ?item wdt:P31/wdt:P279* wd:Q11344.
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
+  OPTIONAL { ?item wdt:P18 ?image. }
   ?item ?p ?statement.
   ?statement a wikibase:BestRank.
 
@@ -111,9 +115,9 @@ window.fetch(url).then(
         response.json().then(function (data) {
             var deck = buildDeck(data);
 
-            genCard("myCanvas", deck[0]);
 
             for (let card of deck) {
+                genCard(card);
                 /*
                 console.log(" ");
                 console.log(card.label);
