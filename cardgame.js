@@ -111,12 +111,16 @@ window.fetch(url).then(
         response.json().then(function (data) {
             var deck = buildDeck(data);
 
+            genCard("myCanvas", deck[0]);
+
             for (let card of deck) {
+                /*
                 console.log(" ");
                 console.log(card.label);
                 for (let property in card.properties) {
                     console.log(card.properties[property].property+": "+card.properties[property].value);
                 }
+                */
             }
 
         });

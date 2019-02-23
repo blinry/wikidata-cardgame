@@ -41,33 +41,36 @@ function genCard(id,data){
         var title = new PointText(titlebox.bounds.center);
         title.justification = 'center';
         title.fillColor = 'black';
-        title.content = data.title;
+        title.content = data.label;
         title.fontSize = 30;
         var description = new PointText(titlebox.bounds.center.add([0,30]));
         description.justification = 'center';
         description.fillColor = 'black';
-        description.content = data.description;
+        description.content = "coming soon :P"; //data.description;
         description.fontSize = 15;
         var qnr = new PointText([63*7-30, 98*7-10]);
         qnr.justification = 'right';
         qnr.fillColor = 'black';
-        qnr.content = data.qnumber;
+        qnr.content = data.item;
         qnr.fontSize = 7;
         
-        for(var i = 0; i<data.properties.length; i++){
+        //for(var i = 0; i<data.properties.length; i++){
+        var i = 0;
+        for(var property in data.properties){
             
             var propbox = new Path.Rectangle([0,rect.height*(10-i)/12 + 20], new Size(rect.width,40));
             propbox.fillColor = 'white';
             propbox.opacity = 0.7;
             var prop = new PointText([40,rect.height*(10-i)/12 + 48]);
             prop.fillColor = 'black';
-            prop.content = data.properties[i];
+            prop.content = data.properties[property].property;
             prop.fontSize = 20;
             var val = new PointText([rect.width-40,rect.height*(10-i)/12 + 48]);
             val.justification = 'right';
             val.fillColor = 'black';
-            val.content = data.values[i];
+            val.content = data.properties[property].value;
             val.fontSize = 20;
+            i += 1;
         }
         
         
