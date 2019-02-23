@@ -1,5 +1,22 @@
 const NUM_PROPERTIES = 5;
 
+// 1772-01-01T00:00:00Z
+function formatDate(date, precision) {
+    if (precision >= 11) {
+        return date.substring(0, 10);
+    } else if (precision == 10) {
+        return date.substring(0, 7);
+    } else if (precision == 9) {
+        return date.substring(0, 4);
+    } else if (precision == 8) {
+        return date.substring(0, 3)+"0s";
+    } else if (precision == 7) {
+        return (parseInt(date.substring(0, 2))+1)+"th century";
+    } else {
+        return "a long time ago";
+    }
+}
+
 function buildDeck(data) {
     // Step 1: Get good property candidates.
     let propertiesCount = {};
@@ -36,9 +53,15 @@ function buildDeck(data) {
         }
 
         if (valid) {
-            let value = line.valueLabel.value;
-            if (line.unitLabel && line.unitLabel.value != "1") {
-                value += " "+line.unitLabel.value;
+            let value = ""
+
+            if (line.precision) {
+                value = formatDate(line.valueLabel.value, line.precision.value);
+            } else {
+                value = line.valueLabel.value;
+                if (line.unitLabel && line.unitLabel.value != "1") {
+                    value += " "+line.unitLabel.value;
+                }
             }
             if (line.item.value in items) {
             } else {
@@ -75,7 +98,7 @@ function buildDeck(data) {
 }
 
 const query = `
-SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel WHERE {
+SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
   ?item wdt:P31/wdt:P279* wd:Q11344.
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
   OPTIONAL { ?item wdt:P18 ?image. }
@@ -99,9 +122,11 @@ SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel
   } UNION {
     ?property wikibase:propertyType wikibase:Time.
 
-    ?statement ?ps ?value.
+    ?statement ?psn ?valueNode.
+    ?valueNode wikibase:timeValue ?value.
+    ?valueNode wikibase:timePrecision ?precision.
 
-    ?property wikibase:statementProperty ?ps.
+    ?property wikibase:statementValue ?psn.
   }
 }
         `;

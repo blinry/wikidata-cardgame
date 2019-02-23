@@ -19,10 +19,8 @@ function genCard(data){
     let imagesDiv = document.getElementById("images");
 
     let canvas = document.createElement("canvas");
-    canvas.width = "630px";
-    canvas.height = "980px";
-    canvas.style.width = "630px";
-    canvas.style.height = "980px";
+    canvas.style.width = ""+(63*7)+"px";
+    canvas.style.height = ""+(88*7)+"px";
     canvas.id = data.label;
 
     let img = document.createElement("img");
@@ -37,7 +35,7 @@ function genCard(data){
         paper.setup(canvas.id);
         with (paper) {
             
-            var rect = new Rectangle(new Point(0,0), new Size(63*7, 98*7));
+            var rect = new Rectangle(new Point(0,0), new Size(63*7, 88*7));
             var mask = new Path.Rectangle(new Rectangle(rect), 22);
             mask.clipMask = true;
             
@@ -73,7 +71,7 @@ function genCard(data){
             description.fillColor = 'black';
             description.content = data.description.capitalize();
             description.fontSize = 15;
-            var qnr = new PointText([63*7-30, 98*7-10]);
+            var qnr = new PointText([63*7-30, 88*7-10]);
             qnr.justification = 'right';
             qnr.fillColor = 'black';
             qnr.content = data.item;
