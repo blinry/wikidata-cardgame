@@ -1,4 +1,5 @@
 const NUM_PROPERTIES = 5;
+const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=`;
 
 function ordinal(i) {
     var j = i % 10,
@@ -137,14 +138,78 @@ function buildDeck(data) {
     return it;
 }
 
-window.onload = function() {
-    var params = window.location.search.substr(1);
-    if (params && params.match(/^Q\d+$/)) {
-        var restriction = "?item wdt:P31/wdt:P279* wd:"+params+".";
+function sampleData(type) {
+    if (type && type.match(/^Q\d+$/)) {
+        var restriction = "?item wdt:P31 wd:"+type+".";
+    } else {
+        var restriction = "?item wdt:P31 wd:Q11344.";
+    }
+    const query = `
+    SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
+      SERVICE bd:sample {
+        ${restriction}
+        bd:serviceParam bd:sample.limit 2000 .
+        bd:serviceParam bd:sample.sampleType "RANDOM".
+      }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
+      OPTIONAL { ?item wdt:P18 ?image. }
+      ?item ?p ?statement.
+      ?statement a wikibase:BestRank.
+
+      ?property rdfs:label ?propLabel.
+      ?property wikibase:claim ?p.
+      ?property rdf:type wikibase:Property .
+
+      FILTER (lang(?propLabel) = 'en' ).
+
+      {
+        ?property wikibase:propertyType wikibase:Quantity.
+
+        ?statement ?psn ?valueNode.    
+        ?valueNode wikibase:quantityAmount ?value.
+        ?valueNode wikibase:quantityUnit ?unit.
+
+        ?property wikibase:statementValue ?psn.
+      } UNION {
+        ?property wikibase:propertyType wikibase:Time.
+
+        ?statement ?psn ?valueNode.
+        ?valueNode wikibase:timeValue ?value.
+        ?valueNode wikibase:timePrecision ?precision.
+
+        ?property wikibase:statementValue ?psn.
+      }
+    }
+            `;
+
+    console.log("Running query...");
+    window.fetch(url+query).then(
+        function (response) {
+            if (response.status !== 200) {
+                console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
+                return;
+            }
+            response.json().then(function (data) {
+                console.log("Query completed.");
+                var deck = buildDeck(data);
+                console.log("Deck built.");
+
+                for (let card of deck) {
+                    genCard(card);
+                }
+            });
+        }
+    ).catch(function (err) {
+        console.warn('Fetch Error :-S', err);
+    });
+}
+
+function limitData(type) {
+    if (type && type.match(/^Q\d+$/)) {
+        var restriction = "?item wdt:P31/wdt:P279* wd:"+type+".";
     } else {
         var restriction = "?item wdt:P31/wdt:P279* wd:Q11344.";
     }
-
     const query = `
     SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
       ${restriction}
@@ -178,8 +243,9 @@ window.onload = function() {
       }
     }
             `;
-    const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=${query}`;
-    window.fetch(url).then(
+
+    console.log("Running query...");
+    window.fetch(url+query).then(
         function (response) {
             if (response.status !== 200) {
                 console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
@@ -198,4 +264,34 @@ window.onload = function() {
     ).catch(function (err) {
         console.warn('Fetch Error :-S', err);
     });
+}
+
+window.onload = function() {
+    var type = window.location.search.substr(1);
+
+    const countQuery = `
+    SELECT (COUNT(?item) AS ?count) WHERE { ?item (wdt:P31/wdt:P279*) wd:${type}. }
+    `;
+
+    window.fetch(url+countQuery).then(
+        function (response) {
+            if (response.status !== 200) {
+                console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
+                return;
+            }
+            response.json().then(function (data) {
+                console.log("Count completed.");
+                let count = data.results.bindings[0].count.value;
+                console.log(count);
+                if (count > 3000) {
+                    sampleData(type);
+                } else {
+                    limitData(type);
+                }
+            });
+        }
+    ).catch(function (err) {
+        console.warn('Fetch Error :-S', err);
+    });
+
 }
