@@ -101,11 +101,7 @@ h1, p {
 }
 
 @media print {
-    .card {
-        box-shadow: 0 0 0 3mm white, 0 0 0 3.2mm black;
-    }
-}
-@media print{
+
     body, h1, h2, h3, ol, ul, div {             
         float: none;     
         position: static;     
@@ -123,6 +119,7 @@ h1, p {
     .card{
         margin: 4mm;
         float: left;
+        box-shadow: 0 0 0 3mm white, 0 0 0 3.2mm black;
     }
 }
 
