@@ -6,17 +6,21 @@ function genCard(data){
     let cardsDiv = document.getElementById("cards");
     let imagesDiv = document.getElementById("images");
 
+
     let canvas = document.createElement("canvas");
     canvas.style.width = ""+(63*7)+"px";
     canvas.style.height = ""+(88*7)+"px";
     canvas.id = data.label;
 
-    ctx.scale(10, 3);
+    let a = document.createElement("a");
+    a.href = data.item;
+    a.target = "_blank";
 
     let img = document.createElement("img");
     imagesDiv.appendChild(img)
 
-    cardsDiv.appendChild(canvas);
+    cardsDiv.append(a)
+    a.appendChild(canvas);
     console.log(canvas.id);
 
 
