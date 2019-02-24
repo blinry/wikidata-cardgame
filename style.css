@@ -82,13 +82,18 @@ h1, p {
     margin-bottom: 4%;
     display: flex;
     justify-content: space-between;
-    padding: 2% 6%;
+    padding: 2% 4%;
     box-sizing: border-box;
     font-size: 70%;
+    align-items:center;
+    line-height: 1em;
 }
 
-.prop>div{
-    margin: auto 0;
+.prop div:first-child{
+    margin-right: 8%;
+}
+.prop div:nth-child(2){
+    text-align: right;
 }
 
 .space{
@@ -123,9 +128,11 @@ h1, p {
     
     .card{
         margin: 4mm;
-        float: left;
+        display: inline-flex;
         box-shadow: 0 0 0 3mm white, 0 0 0 3.2mm black;
     }
+    
+    @page { margin: 10mm 0; }
 }
 
 
