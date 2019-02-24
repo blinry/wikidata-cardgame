@@ -36,7 +36,9 @@ function unitSimplify(text){
     text = text.replace('square kilometre','km^2');
     text = text.replace('square metre','m^2');
     text = text.replace('centimetre','cm');
+    text = text.replace('kilometre','km');
     text = text.replace('metre','m');
+    text = text.replace('astronomical unit','au');
     return text;
 }
 
@@ -58,8 +60,9 @@ function buildDeck(data) {
     }
 
     propertiesSorted = propertiesSorted.sort((a,b) => b[1] - a[1]);
-    //propertiesSorted = propertiesSorted.sort((a,b) => Math.random());
+    //propertiesSorted = propertiesSorted.sort((a,b) => Math.random()+0.01);
 
+    propertiesSorted = propertiesSorted.filter(p => p[2].length < 30);
 
     propertiesSorted = propertiesSorted.slice(0, NUM_PROPERTIES);
     //console.log(propertiesSorted);
@@ -132,70 +135,65 @@ function buildDeck(data) {
     return it;
 }
 
-/*
-wd:Q1032372 // hackspaces
-wd:Q11344 // chemical elements
-wd:Q5119 // capitals
-wd:Q6256 // countries
-*/
-
-const query = `
-SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
-  ?item wdt:P31/wdt:P279* wd:Q5119.
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
-  OPTIONAL { ?item wdt:P18 ?image. }
-  ?item ?p ?statement.
-  ?statement a wikibase:BestRank.
-
-  ?property rdfs:label ?propLabel.
-  ?property wikibase:claim ?p.
-  ?property rdf:type wikibase:Property .
-
-  FILTER (lang(?propLabel) = 'en' ).
-
-  {
-    ?property wikibase:propertyType wikibase:Quantity.
-
-    ?statement ?psn ?valueNode.    
-    ?valueNode wikibase:quantityAmount ?value.
-    ?valueNode wikibase:quantityUnit ?unit.
-
-    ?property wikibase:statementValue ?psn.
-  } UNION {
-    ?property wikibase:propertyType wikibase:Time.
-
-    ?statement ?psn ?valueNode.
-    ?valueNode wikibase:timeValue ?value.
-    ?valueNode wikibase:timePrecision ?precision.
-
-    ?property wikibase:statementValue ?psn.
-  }
-}
-        `;
-const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=${query}`;
-window.fetch(url).then(
-    function (response) {
-        if (response.status !== 200) {
-            console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
-            return;
-        }
-        response.json().then(function (data) {
-            var deck = buildDeck(data);
-
-
-            for (let card of deck) {
-                genCard(card);
-                /*
-                console.log(" ");
-                console.log(card.label);
-                for (let property in card.properties) {
-                    console.log(card.properties[property].property+": "+card.properties[property].value);
-                }
-                */
-            }
-
-        });
+window.onload = function() {
+    var params = window.location.search.substr(1);
+    if (params && params.match(/^Q\d+$/)) {
+        var restriction = "?item wdt:P31/wdt:P279* wd:"+params+".";
+    } else {
+        var restriction = "?item wdt:P31/wdt:P279* wd:Q11344.";
     }
-).catch(function (err) {
-    console.warn('Fetch Error :-S', err);
-});
+
+    const query = `
+    SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
+      ${restriction}
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
+      OPTIONAL { ?item wdt:P18 ?image. }
+      ?item ?p ?statement.
+      ?statement a wikibase:BestRank.
+
+      ?property rdfs:label ?propLabel.
+      ?property wikibase:claim ?p.
+      ?property rdf:type wikibase:Property .
+
+      FILTER (lang(?propLabel) = 'en' ).
+
+      {
+        ?property wikibase:propertyType wikibase:Quantity.
+
+        ?statement ?psn ?valueNode.    
+        ?valueNode wikibase:quantityAmount ?value.
+        ?valueNode wikibase:quantityUnit ?unit.
+
+        ?property wikibase:statementValue ?psn.
+      } UNION {
+        ?property wikibase:propertyType wikibase:Time.
+
+        ?statement ?psn ?valueNode.
+        ?valueNode wikibase:timeValue ?value.
+        ?valueNode wikibase:timePrecision ?precision.
+
+        ?property wikibase:statementValue ?psn.
+      }
+    }
+            `;
+    const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=${query}`;
+    window.fetch(url).then(
+        function (response) {
+            if (response.status !== 200) {
+                console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
+                return;
+            }
+            response.json().then(function (data) {
+                console.log("Query completed.");
+                var deck = buildDeck(data);
+                console.log("Deck built.");
+
+                for (let card of deck) {
+                    genCard(card);
+                }
+            });
+        }
+    ).catch(function (err) {
+        console.warn('Fetch Error :-S', err);
+    });
+}
