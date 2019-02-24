@@ -1,5 +1,5 @@
 * {
-    font-family: Helvetica, sans-serif;
+    font-family: sans-serif;
 }
 
 body {
@@ -9,11 +9,12 @@ body {
 h1 {
     margin: 30px;
     margin-top: 60px;
-    font-size: 40px;
+    font-size: 60px;
+    font-family: Lobster, cursive;
 }
 
 p {
-    font-size: 18px;
+    font-size: 22px;
 }
 
 h1, p, canvas {
