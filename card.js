@@ -20,13 +20,13 @@ function genCardHTML(data){
     var titlediv = document.createElement('div');
     titlediv.className = 'title';
     headerdiv.appendChild(titlediv);
-    titlediv.innerHTML = data.label;
+    titlediv.innerHTML = data.label.capitalize();
     
     if(data.description){
         var descriptiondiv = document.createElement('div');
         descriptiondiv.className = 'description';
         headerdiv.appendChild(descriptiondiv);
-        descriptiondiv.innerHTML = data.description;
+        descriptiondiv.innerHTML = data.description.capitalize();
     }
     
     var space = document.createElement('div');
@@ -40,7 +40,7 @@ function genCardHTML(data){
         
         var propnamediv = document.createElement('div');
         propdiv.appendChild(propnamediv);
-        propnamediv.innerHTML = data.properties[property].property;
+        propnamediv.innerHTML = data.properties[property].property.capitalize();
         var propvaluediv = document.createElement('div');
         propdiv.appendChild(propvaluediv);
         propvaluediv.innerHTML = data.properties[property].value;

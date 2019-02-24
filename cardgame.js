@@ -36,6 +36,7 @@ function formatDate(date, precision) {
 
 function unitSimplify(text){
     text = text.replace('kilogram per cubic metre','kg/m^3');
+    text = text.replace('gram per cubic centimetre','g/cm^3');
     text = text.replace('gram per cubic metre','g/m^3');
     text = text.replace('square kilometre','km^2');
     text = text.replace('square metre','m^2');
