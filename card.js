@@ -46,6 +46,11 @@ function genCardHTML(data){
         propvaluediv.innerHTML = data.properties[property].value;
     }
     
+    var qdiv = document.createElement('div');
+    qdiv.className = 'qnr';
+    card.appendChild(qdiv);
+    qdiv.innerHTML = data.item;
+    
 }
 
 

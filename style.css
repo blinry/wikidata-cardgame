@@ -7,6 +7,7 @@
 body {
     margin: 30px;
     background: #f5f5f5;
+    overflow: visible;
 }
 
 h1 {
@@ -41,6 +42,7 @@ h1, p, canvas {
     flex-wrap: wrap;
     width: 100%;
     justify-content: space-around;
+    overflow: visible;
 }
 
 .card{
@@ -53,6 +55,15 @@ h1, p, canvas {
     
     display: flex;
     flex-direction: column;
+    
+    position: relative;
+}
+
+.qnr{
+    position: absolute;
+    font-size: 30%;
+    bottom: -3%;
+    right: 5%;
 }
 
 .header{
@@ -89,6 +100,27 @@ h1, p, canvas {
 
 .description{
     font-size: 60%;
+}
+
+@media print{
+    body, h1, h2, h3, ol, ul, div {             
+        float: none;     
+        position: static;     
+        overflow: visible; 
+    }
+    
+    body{
+        background: #ffffff;
+    }
+    
+    #cards{
+        display: block;
+    }
+    
+    .card{
+        margin: 4mm;
+        float: left;
+    }
 }
 
 
