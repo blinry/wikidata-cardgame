@@ -1,4 +1,5 @@
 const NUM_PROPERTIES = 5;
+const NUM_CARDS = 32;
 const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=`;
 
 function ordinal(i) {
@@ -133,7 +134,7 @@ function buildDeck(data) {
     it.sort((a,b) => a.valid_count - b.valid_count);
 
     it.sort((a,b) => b.known_properties - a.known_properties);
-    it = it.slice(0, 32);
+    it = it.slice(0, NUM_CARDS);
 
     return it;
 }
