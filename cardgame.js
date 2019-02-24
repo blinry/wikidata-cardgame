@@ -196,7 +196,7 @@ function sampleData(type) {
                 console.log("Deck built: "+deck.length+" cards");
 
                 for (let card of deck) {
-                    genCard(card);
+                    genCardHTML(card);
                 }
             });
         }
@@ -255,7 +255,7 @@ function limitData(type) {
             response.json().then(function (data) {
                 console.log("Query completed.");
                 var deck = buildDeck(data);
-                console.log("Deck built.");
+                console.log("Deck built: "+deck.length+" cards");
 
                 for (let card of deck) {
                     genCardHTML(card);
@@ -271,7 +271,7 @@ window.onload = function() {
     var type = window.location.search.substr(1);
 
     const countQuery = `
-    SELECT (COUNT(?item) AS ?count) WHERE { ?item (wdt:P31/wdt:P279*) wd:${type}. }
+    SELECT (COUNT(?item) AS ?count) WHERE { ?item wdt:P31 wd:${type}. }
     `;
 
     window.fetch(url+countQuery).then(
