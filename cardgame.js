@@ -129,7 +129,6 @@ function buildDeck(data) {
         }
 
         i.properties = props;
-        console.log(it);
         it.push(i);
     }
     it.sort((a,b) => a.valid_count - b.valid_count);
@@ -150,7 +149,7 @@ function sampleData(type) {
     SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
       SERVICE bd:sample {
         ${restriction}
-        bd:serviceParam bd:sample.limit 2000 .
+        bd:serviceParam bd:sample.limit 3000 .
         bd:serviceParam bd:sample.sampleType "RANDOM".
       }
       SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
@@ -194,7 +193,7 @@ function sampleData(type) {
             response.json().then(function (data) {
                 console.log("Query completed.");
                 var deck = buildDeck(data);
-                console.log("Deck built.");
+                console.log("Deck built: "+deck.length+" cards");
 
                 for (let card of deck) {
                     genCard(card);

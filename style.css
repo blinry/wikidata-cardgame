@@ -138,6 +138,10 @@ h1, p {
     }
     
     @page { margin: 10mm 0; }
+
+    h1, p {
+        display: none;
+    }
 }
 
 
