@@ -91,6 +91,8 @@ function buildDeck(data) {
                 items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: {}};
                 if (line.image) {
                     items[line.item.value].image = line.image.value;
+                }else{
+                    items[line.item.value].image = 'texture.png';
                 }
                 if (line.itemDescription) {
                     items[line.item.value].description = line.itemDescription.value;
