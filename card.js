@@ -5,10 +5,14 @@ String.prototype.capitalize = function() {
 function genCardHTML(data){
     let cardsDiv = document.getElementById("cards");
     
+    var link = document.createElement('a');
+    link.href = data.item;
+    cardsDiv.appendChild(link);
+    
     var card = document.createElement('div');
     card.className = 'card'; 
     
-    cardsDiv.appendChild(card);
+    link.appendChild(card);
     
     card.style.backgroundImage = 'url('+data.image+')';
     
