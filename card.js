@@ -2,6 +2,53 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
+function genCardHTML(data){
+    let cardsDiv = document.getElementById("cards");
+    
+    var card = document.createElement('div');
+    card.className = 'card'; 
+    
+    cardsDiv.appendChild(card);
+    
+    card.style.backgroundImage = 'url('+data.image+')';
+    
+    
+    var headerdiv = document.createElement('div');
+    headerdiv.className = 'header';
+    card.appendChild(headerdiv);
+    
+    var titlediv = document.createElement('div');
+    titlediv.className = 'title';
+    headerdiv.appendChild(titlediv);
+    titlediv.innerHTML = data.label;
+    
+    if(data.description){
+        var descriptiondiv = document.createElement('div');
+        descriptiondiv.className = 'description';
+        headerdiv.appendChild(descriptiondiv);
+        descriptiondiv.innerHTML = data.description;
+    }
+    
+    var space = document.createElement('div');
+    space.className = 'space';
+    card.appendChild(space);
+    
+    for(var property in data.properties){
+        var propdiv = document.createElement('div');
+        propdiv.className = 'prop';
+        card.appendChild(propdiv);
+        
+        var propnamediv = document.createElement('div');
+        propdiv.appendChild(propnamediv);
+        propnamediv.innerHTML = data.properties[property].property;
+        var propvaluediv = document.createElement('div');
+        propdiv.appendChild(propvaluediv);
+        propvaluediv.innerHTML = data.properties[property].value;
+    }
+    
+}
+
+
 function genCard(data){
     let cardsDiv = document.getElementById("cards");
     let imagesDiv = document.getElementById("images");
@@ -107,8 +154,9 @@ function genCard(data){
                 i += 1;
             }
             
-            project.activeLayer.scale(0.8);
-            project.activeLayer.translate([-rect.width/2*0.2,-rect.height/2*0.2]);
+            //project.activeLayer.scale(0.8);
+            //project.activeLayer.translate([-rect.width/2*0.2,-rect.height/2*0.2]);
+            document.body.appendChild(project.exportSVG());
             view.draw();
         }
     }

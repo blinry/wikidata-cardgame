@@ -191,7 +191,7 @@ window.onload = function() {
                 console.log("Deck built.");
 
                 for (let card of deck) {
-                    genCard(card);
+                    genCardHTML(card);
                 }
             });
         }

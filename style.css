@@ -1,5 +1,7 @@
 * {
     font-family: sans-serif;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
 }
 
 body {
@@ -28,7 +30,65 @@ h1, p, canvas {
     border-radius: 22px;
     transition: all 0.2s ease-in-out;
 }
+
 #cards canvas:hover {
     transform: scale(1.1);
     box-shadow: 5px 5px 20px rgba(0, 0, 0, 50%);
 }
+
+#cards{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.card{
+    width: calc(63mm - 6.4mm);
+    height: calc(88mm - 6.4mm);
+    background-size: cover;
+    border-radius: 4mm;
+    box-shadow: 0 0 0 3mm white,0 0 0 3.2mm black;
+    margin: 5mm;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.header{
+    background-color: rgba(255,255,255,0.85);
+    width: 100%;
+    height: 20%;
+    margin: 10% 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.prop{
+    background-color: rgba(255,255,255,0.85);
+    width: 100%;
+    height: 8%;
+    margin-bottom: 4%;
+    display: flex;
+    justify-content: space-between;
+    padding: 2%;
+    box-sizing: border-box;
+    font-size: 80%;
+}
+
+.space{
+    base-height: 5%;
+    flex-grow: 2;
+}
+
+.title, .description{
+    width: 100%;
+    text-align: center;
+}
+
+.description{
+    font-size: 60%;
+}
+
+
