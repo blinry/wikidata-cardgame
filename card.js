@@ -11,6 +11,8 @@ function genCard(data){
     canvas.style.height = ""+(88*7)+"px";
     canvas.id = data.label;
 
+    ctx.scale(10, 3);
+
     let img = document.createElement("img");
     imagesDiv.appendChild(img)
 
@@ -40,7 +42,6 @@ function genCard(data){
             }
             
             var outerborder = new Path.Rectangle(rect, 22);
-            outerborder.strokeColor = 'black';
             var innerBorder = new Path.Rectangle([20,20], rect.size.subtract([40,40]),12);
             var border = outerborder.subtract(innerBorder);
             border.fillColor = 'white';
