@@ -20,20 +20,8 @@ p {
     font-size: 22px;
 }
 
-h1, p, canvas {
+h1, p {
     margin: 40px;
-}
-
-#cards canvas {
-    transform: scale(1);
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 50%);
-    border-radius: 22px;
-    transition: all 0.2s ease-in-out;
-}
-
-#cards canvas:hover {
-    transform: scale(1.1);
-    box-shadow: 5px 5px 20px rgba(0, 0, 0, 50%);
 }
 
 #cards{
@@ -48,11 +36,21 @@ h1, p, canvas {
     height: calc(88mm - 6.4mm);
     background-size: cover;
     border-radius: 4mm;
-    box-shadow: 0 0 0 3mm white,0 0 0 3.2mm black;
+    box-shadow: 0 0 0 3mm white, 2px 2px 10px 3mm rgba(0, 0, 0, 50%);
     margin: 5mm;
     
     display: flex;
     flex-direction: column;
+
+    transform: scale(1);
+    transition: all 0.2s ease-in-out;
+
+    page-break-inside: avoid;
+}
+
+.card:hover {
+    transform: scale(1.1);
+    z-index: 1;
 }
 
 .header{
@@ -91,4 +89,8 @@ h1, p, canvas {
     font-size: 60%;
 }
 
-
+@media print {
+    .card {
+        box-shadow: 0 0 0 3mm white, 0 0 0 3.2mm black;
+    }
+}
