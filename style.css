@@ -28,7 +28,19 @@ h1, p, canvas {
     border-radius: 22px;
     transition: all 0.2s ease-in-out;
 }
+
 #cards canvas:hover {
     transform: scale(1.1);
     box-shadow: 5px 5px 20px rgba(0, 0, 0, 50%);
+}
+
+@media print {
+    #cards canvas {
+        box-shadow: 0 0 0 black;
+        margin: 5px;
+        border: 0.5px solid black;
+    }
+    p {
+        display: none;
+    }
 }
