@@ -36,7 +36,9 @@ function unitSimplify(text){
     text = text.replace('square kilometre','km^2');
     text = text.replace('square metre','m^2');
     text = text.replace('centimetre','cm');
+    text = text.replace('kilometre','km');
     text = text.replace('metre','m');
+    text = text.replace('astronomical unit','au');
     return text;
 }
 
@@ -60,6 +62,7 @@ function buildDeck(data) {
     propertiesSorted = propertiesSorted.sort((a,b) => b[1] - a[1]);
     //propertiesSorted = propertiesSorted.sort((a,b) => Math.random()+0.01);
 
+    propertiesSorted = propertiesSorted.filter(p => p[2].length < 30);
 
     propertiesSorted = propertiesSorted.slice(0, NUM_PROPERTIES);
     //console.log(propertiesSorted);
