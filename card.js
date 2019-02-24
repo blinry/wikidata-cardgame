@@ -8,8 +8,8 @@ function genCard(data){
 
 
     let canvas = document.createElement("canvas");
-    canvas.style.width = ""+(63*7)+"px";
-    canvas.style.height = ""+(88*7)+"px";
+    canvas.style.width = ""+(63*7)*0.8+"px";
+    canvas.style.height = ""+(88*7)*0.8+"px";
     canvas.id = data.label;
 
     let a = document.createElement("a");
@@ -107,7 +107,8 @@ function genCard(data){
                 i += 1;
             }
             
-            
+            project.activeLayer.scale(0.8);
+            project.activeLayer.translate([-rect.width/2*0.2,-rect.height/2*0.2]);
             view.draw();
         }
     }
