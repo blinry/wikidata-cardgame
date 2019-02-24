@@ -2,18 +2,6 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
-window.onload = function() {
-    var data = {
-        title: 'title of titles',
-        qnumber: 'Q123456',
-        description: 'The very nice and long description',
-        properties: ['size','mass','pokeindex','age'],
-        values: [34,12345,76, 150]
-    };
-    //genCard('myCanvas',data);
-}
-
-
 function genCard(data){
     let cardsDiv = document.getElementById("cards");
     let imagesDiv = document.getElementById("images");
@@ -31,7 +19,6 @@ function genCard(data){
 
 
     img.onload = function() {
-        console.log("onload");
         paper.setup(canvas.id);
         with (paper) {
             

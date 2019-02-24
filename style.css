@@ -1,0 +1,32 @@
+* {
+    font-family: Helvetica, sans-serif;
+}
+
+body {
+    margin: 30px;
+}
+
+h1 {
+    margin: 30px;
+    margin-top: 60px;
+    font-size: 40px;
+}
+
+p {
+    font-size: 18px;
+}
+
+h1, p, canvas {
+    margin: 40px;
+}
+
+#cards canvas {
+    transform: scale(1);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 50%);
+    border-radius: 22px;
+    transition: all 0.2s ease-in-out;
+}
+#cards canvas:hover {
+    transform: scale(1.1);
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, 50%);
+}

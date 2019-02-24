@@ -130,77 +130,65 @@ function buildDeck(data) {
     return it;
 }
 
-/*
-wd:Q1032372 // hackspaces
-wd:Q11344 // chemical elements
-wd:Q5119 // capitals
-wd:Q6256 // countries
-wd:Q55990535 // computer models
-wd:Q142714 // cards games
-retro games
-// politiker
-wd:Q16873378 // himmelskörper
-*/
-
-  //?item wdt:P31/wdt:P279* wd:Q1130645.
-
-const query = `
-SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
-  ?item wdt:P39 wd:Q11696.
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
-  OPTIONAL { ?item wdt:P18 ?image. }
-  ?item ?p ?statement.
-  ?statement a wikibase:BestRank.
-
-  ?property rdfs:label ?propLabel.
-  ?property wikibase:claim ?p.
-  ?property rdf:type wikibase:Property .
-
-  FILTER (lang(?propLabel) = 'en' ).
-
-  {
-    ?property wikibase:propertyType wikibase:Quantity.
-
-    ?statement ?psn ?valueNode.    
-    ?valueNode wikibase:quantityAmount ?value.
-    ?valueNode wikibase:quantityUnit ?unit.
-
-    ?property wikibase:statementValue ?psn.
-  } UNION {
-    ?property wikibase:propertyType wikibase:Time.
-
-    ?statement ?psn ?valueNode.
-    ?valueNode wikibase:timeValue ?value.
-    ?valueNode wikibase:timePrecision ?precision.
-
-    ?property wikibase:statementValue ?psn.
-  }
-}
-        `;
-const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=${query}`;
-window.fetch(url).then(
-    function (response) {
-        if (response.status !== 200) {
-            console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
-            return;
-        }
-        response.json().then(function (data) {
-            var deck = buildDeck(data);
-
-
-            for (let card of deck) {
-                genCard(card);
-                /*
-                console.log(" ");
-                console.log(card.label);
-                for (let property in card.properties) {
-                    console.log(card.properties[property].property+": "+card.properties[property].value);
-                }
-                */
-            }
-
-        });
+window.onload = function() {
+    var params = window.location.search.substr(1);
+    if (params && params.match(/^Q\d+$/)) {
+        var restriction = "?item wdt:P31/wdt:P279* wd:"+params+".";
+    } else {
+        var restriction = "?item wdt:P31/wdt:P279* wd:Q11344.";
     }
-).catch(function (err) {
-    console.warn('Fetch Error :-S', err);
-});
+
+    const query = `
+    SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
+      ${restriction}
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
+      OPTIONAL { ?item wdt:P18 ?image. }
+      ?item ?p ?statement.
+      ?statement a wikibase:BestRank.
+
+      ?property rdfs:label ?propLabel.
+      ?property wikibase:claim ?p.
+      ?property rdf:type wikibase:Property .
+
+      FILTER (lang(?propLabel) = 'en' ).
+
+      {
+        ?property wikibase:propertyType wikibase:Quantity.
+
+        ?statement ?psn ?valueNode.    
+        ?valueNode wikibase:quantityAmount ?value.
+        ?valueNode wikibase:quantityUnit ?unit.
+
+        ?property wikibase:statementValue ?psn.
+      } UNION {
+        ?property wikibase:propertyType wikibase:Time.
+
+        ?statement ?psn ?valueNode.
+        ?valueNode wikibase:timeValue ?value.
+        ?valueNode wikibase:timePrecision ?precision.
+
+        ?property wikibase:statementValue ?psn.
+      }
+    }
+            `;
+    const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=${query}`;
+    window.fetch(url).then(
+        function (response) {
+            if (response.status !== 200) {
+                console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
+                return;
+            }
+            response.json().then(function (data) {
+                console.log("Query completed.");
+                var deck = buildDeck(data);
+                console.log("Deck built.");
+
+                for (let card of deck) {
+                    genCard(card);
+                }
+            });
+        }
+    ).catch(function (err) {
+        console.warn('Fetch Error :-S', err);
+    });
+}
