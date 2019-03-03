@@ -284,7 +284,7 @@ window.onload = function() {
                 console.log("Count completed.");
                 let count = data.results.bindings[0].count.value;
                 console.log(count);
-                if (count > 3000) {
+                if (count > 100) {
                     sampleData(type);
                 } else {
                     limitData(type);
