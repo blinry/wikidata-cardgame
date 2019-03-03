@@ -2,6 +2,9 @@ const NUM_PROPERTIES = 5;
 const NUM_CARDS = 32;
 const url = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=`;
 
+let statusField = undefined;
+let typeLabel = undefined;
+
 function ordinal(i) {
     var j = i % 10,
         k = i % 100;
@@ -198,6 +201,7 @@ function sampleData(type) {
                 for (let card of deck) {
                     genCardHTML(card);
                 }
+                statusField.innerHTML = "Here's your <strong>"+typeLabel+"</strong> card game, consisting of "+deck.length+" cards:";
             });
         }
     ).catch(function (err) {
@@ -260,6 +264,8 @@ function limitData(type) {
                 for (let card of deck) {
                     genCardHTML(card);
                 }
+
+                statusField.innerHTML = "Here's your <strong>"+typeLabel+"</strong> card game, consisting of "+deck.length+" cards:";
             });
         }
     ).catch(function (err) {
@@ -268,27 +274,49 @@ function limitData(type) {
 }
 
 window.onload = function() {
-    var type = window.location.search.substr(1);
+    var type = window.location.search.substr(1) || "Q11344";
+    statusField = document.getElementById("status");
 
-    const countQuery = `
-    SELECT (COUNT(?item) AS ?count) WHERE { ?item wdt:P31 wd:${type}. }
+    const typeNameQuery = `
+    SELECT ?label WHERE {
+      wd:${type} rdfs:label ?label.
+      FILTER((LANG(?label)) = "en")
+    }
     `;
-
-    window.fetch(url+countQuery).then(
+    window.fetch(url+typeNameQuery).then(
         function (response) {
             if (response.status !== 200) {
                 console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
                 return;
             }
             response.json().then(function (data) {
-                console.log("Count completed.");
-                let count = data.results.bindings[0].count.value;
-                console.log(count);
-                if (count > 100) {
-                    sampleData(type);
-                } else {
-                    limitData(type);
-                }
+                typeLabel = data.results.bindings[0].label.value;
+                statusField.innerHTML = "Generating your <strong>"+typeLabel+"</strong> card game...";
+
+                const countQuery = `
+                SELECT (COUNT(?item) AS ?count) WHERE { ?item wdt:P31 wd:${type}. }
+                `;
+
+                window.fetch(url+countQuery).then(
+                    function (response) {
+                        if (response.status !== 200) {
+                            console.warn(`Looks like there was a problem. Status Code: ${response.status}`);
+                            return;
+                        }
+                        response.json().then(function (data) {
+                            console.log("Count completed.");
+                            let count = data.results.bindings[0].count.value;
+                            console.log(count);
+                            if (count > 100) {
+                                sampleData(type);
+                            } else {
+                                limitData(type);
+                            }
+                        });
+                    }
+                ).catch(function (err) {
+                    console.warn('Fetch Error :-S', err);
+                });
             });
         }
     ).catch(function (err) {
