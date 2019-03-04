@@ -209,7 +209,7 @@ function runDataQuery(restriction) {
             genCardHTML(card);
         }
 
-        statusField.innerHTML = "Here's your <strong>"+typeLabel+"</strong> card game, consisting of "+deck.length+" cards:";
+        statusField.innerHTML = "Here's your <strong>"+typeLabel+"</strong> card game, consisting of "+deck.length+" cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>";
     });
 }
 

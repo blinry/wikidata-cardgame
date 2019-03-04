@@ -13,6 +13,8 @@
     <body>
         <h1>Wikidata Card Game Generator</h1>
 
+        <p id="subtitle">“Ludicrously cool!” <span class="soft">@draemmli@chaos.social</span> “It's awesome!” <span class="soft">@Auregann</span> “Superb” <span class="soft">@umblaetterer</span></p>
+
         <p>Generate your own card game, suitable for playing <a href="https://en.wikipedia.org/wiki/Top_Trumps">Top Trumps</a>, using Wikidata!</p>
 
         <p>Think of a topic, and type its singular form into the search box over at <a href="https://www.wikidata.org" target="_blank">Wikidata</a>. Then, look for the <em>entity ID</em> near the top, which starts with Q. For example, the ID of <a href="https://www.wikidata.org/wiki/Q11344">chemical element</a> is <em>Q11344</em>. Add this ID to the URL, like this: <code>cardgame.morr.cc/?Q11344</code></p>
@@ -23,14 +25,13 @@
             <a href="?Q634">planet</a>,
             <a href="?Q1032372">hackerspace</a>,
             <a href="?Q55990535">computer model</a>,
+            <a href="?Q35273">telescope</a>,
             <a href="?Q142714">card game</a>.
         </p>
 
         <p>How does this work? We fetch items from Wikidata which are instances of arbitrary subclasses of the topic provided in the URL. We'll then find the properties which occur most often, and select the 32 cards which have as many of these as possible filled in.</p>
 
         <p>Made for the <a href="https://de.wikipedia.org/wiki/Wikipedia:Wikidata-Workshop-Ulm-2019">Wikidata-Workshop 2019</a> in Ulm by <a href="https://www.bleeptrack.de">bleeptrack</a> and <a href="https://morr.cc">blinry</a>. Source code is <a href="https://github.com/blinry/wikidata-cardgame">on GitHub</a>, feel free to suggest ideas or report bugs!</p>
-
-        <p>If you like the generated cards, you can <a href="javascript:window.print()">print them!</a></p>
 
         <p id="status"></p>
 
