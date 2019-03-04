@@ -8,25 +8,40 @@
 }
 
 body {
-    margin: 4rem;
+    margin: 3rem;
     background: #f5f5f5;
     overflow-y: scroll;
 }
 
 h1, p {
-    max-width: 50rem;
+    max-width: 60rem;
     margin: auto;
 }
 
 h1 {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     font-size: 3.5rem;
     font-family: Lobster, cursive;
 }
 
 p {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.4rem;
+    color: #444;
+    margin-bottom: 1.1rem;
+}
+
+a {
+    text-decoration: none;
+    color: #484;
+}
+
+a:hover {
+    color: #262;
+}
+
+code {
+    font-family: monospace;
 }
 
 #cards {
@@ -34,6 +49,7 @@ p {
     flex-wrap: wrap;
     justify-content: space-between;
     overflow: visible;
+    margin-top: 3rem;
 }
 
 .card {
@@ -50,16 +66,45 @@ p {
     margin-bottom: 10mm;
 
     display: flex;
+    position: relative;
     flex-direction: column;
 
-    transform: scale(1);
-    transition: all 0.2s ease-in-out;
-
     page-break-inside: avoid;
+
+    transition: box-shadow 0.1s ease-in-out;
 }
 
-.card:hover {
-    transform: scale(1.1);
+a:hover .card {
+    box-shadow: 0 0 0 3mm white, 2px 2px 20px 3mm rgba(0, 0, 0, 30%);
+}
+
+#cards a {
+    transform: scale(1) rotate(0deg);
+    transition: transform 0.1s ease-in-out;
+}
+
+#cards a:hover {
+    transform: scale(1.2) rotate(0deg);
+}
+
+#cards a:nth-child(2n):hover {
+    transform: scale(1.2) rotate(-1deg);
+}
+
+#cards a:nth-child(3n):hover {
+    transform: scale(1.2) rotate(2deg);
+}
+
+#cards a:nth-child(4n):hover {
+    transform: scale(1.2) rotate(-3deg);
+}
+
+#cards a:nth-child(5n):hover {
+    transform: scale(1.2) rotate(4deg);
+}
+
+
+#cards a:hover {
     z-index: 1;
 }
 
