@@ -196,7 +196,6 @@ function runDataQuery(restriction) {
       ?property rdf:type wikibase:Property .
 
       FILTER (lang(?propLabel) = 'en' ).
-      FILTER (?propLabel != "inception"@en).
 
       {
         ?property wikibase:propertyType wikibase:Quantity.
