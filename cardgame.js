@@ -84,24 +84,28 @@ function buildDeck(results) {
     let propertiesCount = {};
     for (let line of results) {
         if (line.property.value in propertiesCount) {
-            propertiesCount[line.property.value].count += 1;
+            propertiesCount[line.property.value].items.push(line.item.value);
         } else {
-            propertiesCount[line.property.value] = {count: 1, id: line.property.value, label: line.propLabel.value};
+            propertiesCount[line.property.value] = {items: [line.item.value], id: line.property.value, label: line.propLabel.value};
         }
     }
 
     let propertiesSorted = [];
 
+    function onlyUnique(value, index, self) {
+        return self.indexOf(value) === index;
+    }
+
     for (const property in propertiesCount) {
-        propertiesSorted.push([property, propertiesCount[property].count, propertiesCount[property].label]);
+        propertiesSorted.push([property, propertiesCount[property].items.filter(onlyUnique).length, propertiesCount[property].label]);
     }
 
     propertiesSorted = propertiesSorted.sort((a,b) => b[1] - a[1]);
     //propertiesSorted = propertiesSorted.sort((a,b) => Math.random()+0.01);
 
-    propertiesSorted = propertiesSorted.filter(p => p[2].length < 30);
-
     propertiesSorted = propertiesSorted.slice(0, MAX_PROPERTIES);
+
+    console.log(propertiesSorted);
 
     // Step 2: Get items which as many of these properties as possible.
     let items = {};
@@ -169,10 +173,21 @@ function buildDeck(results) {
 
 function runDataQuery(restriction) {
     let query = `
-    SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WHERE {
-      ${restriction}
+    SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WITH {
+      SELECT DISTINCT ?item WHERE {
+        ${restriction}
+        ?item wikibase:statements ?statements.
+      }
+      ORDER BY DESC(?statements)
+      LIMIT 64
+    } AS %items
+    WHERE {
+      INCLUDE %items.
+
       SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
+
       OPTIONAL { ?item wdt:P18 ?image. }
+
       ?item ?p ?statement.
       ?statement a wikibase:BestRank.
 
@@ -181,11 +196,12 @@ function runDataQuery(restriction) {
       ?property rdf:type wikibase:Property .
 
       FILTER (lang(?propLabel) = 'en' ).
+      FILTER (?propLabel != "inception"@en).
 
       {
         ?property wikibase:propertyType wikibase:Quantity.
 
-        ?statement ?psn ?valueNode.    
+        ?statement ?psn ?valueNode.
         ?valueNode wikibase:quantityAmount ?value.
         ?valueNode wikibase:quantityUnit ?unit.
 
@@ -201,6 +217,8 @@ function runDataQuery(restriction) {
       }
     }
     `;
+
+    query = query.replace(/%/g, "%25");
 
     runQuery(query, results => {
         var deck = buildDeck(results);
@@ -227,11 +245,7 @@ function sampleData(type) {
 }
 
 function limitData(type) {
-    if (type && type.match(/^Q\d+$/)) {
-        var restriction = "?item wdt:P31/wdt:P279* wd:"+type+".";
-    } else {
-        var restriction = "?item wdt:P31/wdt:P279* wd:Q11344.";
-    }
+    var restriction = "?item (wdt:P31|wdt:P106|wdt:P39)/wdt:P279* wd:"+type+".";
     runDataQuery(restriction);
 }
 
@@ -303,17 +317,6 @@ window.onload = function() {
         typeLabel = results[0].label.value;
         statusField.innerHTML = "Generating your <strong>"+typeLabel+"</strong> card game...";
 
-        const countQuery = `
-        SELECT (COUNT(?item) AS ?count) WHERE { ?item wdt:P31 wd:${type}. }
-        `;
-
-        runQuery(countQuery, results => {
-            let count = results[0].count.value;
-            if (count > 100) {
-                sampleData(type);
-            } else {
-                limitData(type);
-            }
-        });
+        limitData(type);
     });
 }
