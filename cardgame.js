@@ -179,7 +179,7 @@ function runDataQuery(restriction) {
         ?item wikibase:statements ?statements.
       }
       ORDER BY DESC(?statements)
-      LIMIT 64
+      LIMIT 100
     } AS %items
     WHERE {
       INCLUDE %items.
@@ -231,21 +231,8 @@ function runDataQuery(restriction) {
     });
 }
 
-function sampleData(type) {
-    if (type && type.match(/^Q\d+$/)) {
-        var restriction = "?item wdt:P31 wd:"+type+".";
-    } else {
-        var restriction = "?item wdt:P31 wd:Q11344.";
-    }
-    runDataQuery(`SERVICE bd:sample {
-        ${restriction}
-        bd:serviceParam bd:sample.limit 3000 .
-        bd:serviceParam bd:sample.sampleType "RANDOM".
-    }`);
-}
-
 function limitData(type) {
-    var restriction = "?item (wdt:P31|wdt:P106|wdt:P39)/wdt:P279* wd:"+type+".";
+    var restriction = "?item wdt:P31/wdt:P279* wd:"+type+".";
     runDataQuery(restriction);
 }
 
