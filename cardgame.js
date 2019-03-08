@@ -163,7 +163,6 @@ function buildDeck(results) {
         i.properties = props;
         it.push(i);
     }
-    it.sort((a,b) => a.valid_count - b.valid_count);
 
     it.sort((a,b) => b.known_properties - a.known_properties);
     it = it.slice(0, MAX_CARDS);
