@@ -105,8 +105,6 @@ function buildDeck(results) {
 
     propertiesSorted = propertiesSorted.slice(0, MAX_PROPERTIES);
 
-    console.log(propertiesSorted);
-
     // Step 2: Get items which as many of these properties as possible.
     let items = {};
 
@@ -289,7 +287,8 @@ function genCardHTML(data){
 }
 
 window.onload = function() {
-    var type = window.location.search.substr(1) || "Q11344";
+    var match = window.location.search.match(/Q\d+/g);
+    var type = match && match[0] || "Q11344";
     statusField = document.getElementById("status");
 
     const typeNameQuery = `
