@@ -267,7 +267,7 @@ function genCardHTML(data){
 
     link.appendChild(card);
 
-    card.style.backgroundImage = 'url('+data.image+')';
+    card.style.backgroundImage = 'url('+data.image+'?width=1280'+')';
 
 
     var headerdiv = document.createElement('div');
