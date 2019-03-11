@@ -4,9 +4,7 @@ const API_URL = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=
 
 let statusField = undefined;
 let typeLabel = undefined;
-
 let imageProgress = 0;
-let progressBar = undefined;
 
 function setStatus(text) {
     statusField.innerHTML = text;
