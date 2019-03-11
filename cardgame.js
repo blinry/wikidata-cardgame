@@ -5,6 +5,9 @@ const API_URL = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=
 let statusField = undefined;
 let typeLabel = undefined;
 
+let imageProgress = 0;
+let progressBar = undefined;
+
 function setStatus(text) {
     statusField.innerHTML = text;
 }
@@ -22,6 +25,25 @@ function runQuery(query, callback) {
         }
     ).catch(function (err) {
         setStatus('An error occurred while running the query: "'+err+'"');
+    });
+}
+
+function preloadImage(url, totalCards) {
+    return new Promise(function(resolve, reject) {
+        var img = new Image();
+        img.src = url;
+        img.onload = function() {
+            // An imageProgress of -1 indicates an error while async loading one of the images
+            if(imageProgress < 0)
+                return;
+
+            imageProgress++;
+            setStatus("Preparing your <strong>"+typeLabel+"</strong> card game, loading image <b>" + imageProgress + " of "+totalCards+"</b> card images.");
+            return resolve();
+        };
+        img.onerror = function() {
+            return reject("Error loading " + url);
+        }
     });
 }
 
@@ -242,11 +264,21 @@ function runDataQuery(restriction) {
     runQuery(query, results => {
         var deck = buildDeck(results);
 
+        imageProgress = 0;
+        var promises = [];
         for (let card of deck) {
-            genCardHTML(card);
+            promises.push(preloadImage(card.image, deck.length));
         }
 
-        statusField.innerHTML = "Here's your <strong>"+typeLabel+"</strong> card game, consisting of "+deck.length+" cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>";
+        Promise.all(promises).then(function() {
+            for (let card of deck) {
+                genCardHTML(card);
+            }
+            setStatus("Here's your <strong>"+typeLabel+"</strong> card game, consisting of "+deck.length+" cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>");
+        }, function(err) {
+            imageProgress = -1;
+            setStatus("An error occurred while generating the cards: " + err);
+        });
     });
 }
 
@@ -322,7 +354,7 @@ window.onload = function() {
     `;
     runQuery(typeNameQuery, results => {
         typeLabel = results[0].label.value;
-        statusField.innerHTML = "Generating your <strong>"+typeLabel+"</strong> card game...";
+        setStatus("Generating your <strong>"+typeLabel+"</strong> card game... (Fetching data may take a while!)");
 
         limitData(type);
     });
