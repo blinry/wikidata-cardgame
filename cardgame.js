@@ -251,7 +251,7 @@ function runDataQuery(restriction) {
 }
 
 function limitData(type) {
-    var restriction = "?item (wdt:P31?/wdt:P279*)|wdt:P171* wd:"+type+".";
+    var restriction = "?item (wdt:P31|wdt:P106|wdt:P39)/wdt:P279*|wdt:P171* wd:"+type+".";
     runDataQuery(restriction);
 }
 
