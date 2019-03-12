@@ -174,7 +174,7 @@ function buildDeck(results) {
             } else {
                 items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: {}};
                 if (line.image) {
-                    items[line.item.value].image = line.image.value.replace('http://', 'https://');
+                    items[line.item.value].image = line.image.value.replace('http://', 'https://')+'?width=1280';
                 }else{
                     items[line.item.value].image = 'texture.png';
                 }
@@ -297,7 +297,7 @@ function genCardHTML(data){
 
     link.appendChild(card);
 
-    card.style.backgroundImage = 'url('+data.image+'?width=1280'+')';
+    card.style.backgroundImage = 'url('+data.image+')';
 
 
     var headerdiv = document.createElement('div');
