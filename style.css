@@ -54,7 +54,7 @@ code {
     margin-right: 1rem;
 }
 
-strong {
+a.id {
     background: #484;
     color: white;
     padding: 0.2rem;

@@ -4,6 +4,7 @@ const API_URL = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=
 
 let statusField = undefined;
 let typeLabel = undefined;
+let type = undefined;
 let imageProgress = 0;
 
 function setStatus(text) {
@@ -36,7 +37,7 @@ function preloadImage(url, totalCards) {
                 return;
 
             imageProgress++;
-            setStatus("Preparing your <strong>"+typeLabel+"</strong> card game, loading image <b>" + imageProgress + " of "+totalCards+"</b> card images.");
+            setStatus("Preparing your "+gameTypeHTML()+" card game, loading image <b>" + imageProgress + " of "+totalCards+"</b> card images.");
             return resolve();
         };
         img.onerror = function() {
@@ -121,6 +122,10 @@ function unitSimplify(text){
     return text;
 }
 
+function gameTypeHTML() {
+    return `<a href="https://www.wikidata.org/wiki/${type}" class="id">${typeLabel}</a>`;
+}
+
 function buildDeck(results) {
     // Step 1: Get good property candidates.
     let propertiesCount = {};
@@ -128,7 +133,7 @@ function buildDeck(results) {
         if (line.property.value in propertiesCount) {
             propertiesCount[line.property.value].items.push(line.item.value);
         } else {
-            propertiesCount[line.property.value] = {items: [line.item.value], id: line.property.value, label: line.propLabel.value};
+            propertiesCount[line.property.value] = {items: [line.item.value], id: line.property.value, label: line.propertyLabel.value};
         }
     }
 
@@ -166,7 +171,7 @@ function buildDeck(results) {
             } else {
                 let decimals = (Math.round(line.valueLabel.value) == +line.valueLabel.value) ? 0 : 2;
                 value = number_format(line.valueLabel.value, decimals, ".", " ");
-                if (line.unitLabel && line.unitLabel.value != "1") {
+                if (line.unitLabel && line.unit.value != "http://www.wikidata.org/entity/Q199") {
                     value += " "+unitSimplify(line.unitLabel.value); 
                 }
             }
@@ -182,7 +187,7 @@ function buildDeck(results) {
                     items[line.item.value].description = line.itemDescription.value;
                 }
             }
-            items[line.item.value].properties[line.propLabel.value] = {property: line.propLabel.value, value: value};
+            items[line.item.value].properties[line.propertyLabel.value] = {property: line.propertyLabel.value, value: value};
         }
     }
 
@@ -211,9 +216,9 @@ function buildDeck(results) {
     return it;
 }
 
-function runDataQuery(restriction) {
+function runDataQuery(restriction, lang) {
     let query = `
-    SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propLabel ?valueLabel ?unitLabel ?precision WITH {
+    SELECT ?item ?itemLabel ?itemDescription ?image ?property ?propertyLabel ?valueLabel ?unit ?unitLabel ?precision WITH {
       SELECT DISTINCT ?item WHERE {
         ${restriction}
         ?item wikibase:statements ?statements.
@@ -224,18 +229,15 @@ function runDataQuery(restriction) {
     WHERE {
       INCLUDE %items.
 
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de". }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang}". }
 
       OPTIONAL { ?item wdt:P18 ?image. }
 
       ?item ?p ?statement.
       ?statement a wikibase:BestRank.
 
-      ?property rdfs:label ?propLabel.
       ?property wikibase:claim ?p.
       ?property rdf:type wikibase:Property .
-
-      FILTER (lang(?propLabel) = 'en' ).
 
       {
         ?property wikibase:propertyType wikibase:Quantity.
@@ -272,17 +274,12 @@ function runDataQuery(restriction) {
             for (let card of deck) {
                 genCardHTML(card);
             }
-            setStatus("Here's your <strong>"+typeLabel+"</strong> card game, consisting of "+deck.length+" cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>");
+            setStatus("Here's your "+gameTypeHTML()+" card game, consisting of "+deck.length+" cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>");
         }, function(err) {
             imageProgress = -1;
             setStatus("An error occurred while generating the cards: " + err);
         });
     });
-}
-
-function limitData(type) {
-    var restriction = "?item (wdt:P31|wdt:P106|wdt:P39)/wdt:P279*|wdt:P171* wd:"+type+".";
-    runDataQuery(restriction);
 }
 
 function genCardHTML(data){
@@ -340,20 +337,24 @@ function genCardHTML(data){
 }
 
 window.onload = function() {
+    var searchParams = new URLSearchParams(window.location.search)
+    var lang = searchParams.get("lang") || "en";
     var match = window.location.search.match(/Q\d+/g);
-    var type = match && match[0] || "Q11344";
+    type = match && match[0] || "Q11344";
+
     statusField = document.getElementById("status");
 
     const typeNameQuery = `
-    SELECT ?label WHERE {
-      wd:${type} rdfs:label ?label.
-      FILTER((LANG(?label)) = "en")
+    SELECT ?itemLabel WHERE {
+      BIND(wd:${type} as ?item)
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang}". }
     }
     `;
     runQuery(typeNameQuery, results => {
-        typeLabel = results[0].label.value;
-        setStatus("Generating your <strong>"+typeLabel+"</strong> card game... (Fetching data may take a while!)");
+        typeLabel = results[0].itemLabel.value;
+        setStatus("Generating your "+gameTypeHTML()+" card game... (Fetching data may take a while!)");
 
-        limitData(type);
+        var restriction = "?item (wdt:P31|wdt:P106|wdt:P39)/wdt:P279*|wdt:P171* wd:"+type+".";
+        runDataQuery(restriction, lang);
     });
 }
