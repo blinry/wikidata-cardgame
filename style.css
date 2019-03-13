@@ -69,6 +69,10 @@ a.id {
     margin-top: 3rem;
 }
 
+#cards a {
+    margin-bottom: 10mm;
+}
+
 .card {
     width: calc(63mm - 6.4mm);
     height: calc(88mm - 6.4mm);
@@ -80,7 +84,6 @@ a.id {
     box-shadow: 0 0 0 3mm white, 2px 2px 10px 3mm rgba(0, 0, 0, 50%);
 
     margin: 3mm;
-    margin-bottom: 10mm;
 
     display: flex;
     position: relative;
