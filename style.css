@@ -222,7 +222,7 @@ a:hover .card {
         margin: 10mm 7mm;
     }
 
-    h1, p {
+    h1, p, form {
         display: none;
     }
 }
