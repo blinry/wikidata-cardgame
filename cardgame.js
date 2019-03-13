@@ -5,13 +5,22 @@ const API_URL = `https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=
 let statusField = undefined;
 let typeLabel = undefined;
 let type = undefined;
+let lang = undefined;
 let imageProgress = 0;
+
+String.prototype.trunc = String.prototype.trunc ||
+      function(n){
+          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
+      };
 
 function setStatus(text) {
     statusField.innerHTML = text;
 }
 
 function runQuery(query, callback) {
+    query = query.replace(/%/g, "%25");
+    query = query.replace(/&/g, "%26");
+
     window.fetch(API_URL+query).then(
         function (response) {
             if (response.status !== 200) {
@@ -259,8 +268,6 @@ function runDataQuery(restriction, lang) {
     }
     `;
 
-    query = query.replace(/%/g, "%25");
-
     runQuery(query, results => {
         var deck = buildDeck(results);
 
@@ -336,13 +343,50 @@ function genCardHTML(data){
     qdiv.innerHTML = data.item;
 }
 
+function populateLanguageOptions() {
+    const langQuery = `
+    SELECT ?item ?code ?itemLabel (GROUP_CONCAT(?nativeLabel;separator="/") as ?nativeLabels) WHERE {
+      ?item wdt:P424 ?code.
+      ?item wdt:P1705 ?nativeLabel.
+
+      MINUS { ?item (wdt:P31/wdt:P279*) wd:Q14827288. }
+      MINUS { ?item (wdt:P31/wdt:P279*) wd:Q17442446. }
+      MINUS { ?item wdt:P279+ wd:Q1860. }
+      FILTER(?item != wd:Q22282939 && ?item != wd:Q22282914)
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+    }
+    GROUP BY ?item ?code ?itemLabel
+    ORDER BY ?itemLabel
+    `;
+    runQuery(langQuery, results => {
+        let select = document.querySelector("select");
+        for (let line of results) {
+            let option = document.createElement("option");
+            option.innerHTML = `${line.itemLabel.value} (${line.code.value}) – ${line.nativeLabels.value}`.trunc(40);
+            option.value = line.code.value;
+            select.appendChild(option);
+        }
+        document.querySelector("#topic").value = type;
+        document.querySelector("#lang").value = lang;
+    });
+}
+
+function submitQuery(e) {
+    e.preventDefault();
+    console.log("hi");
+    window.location = `/?${document.querySelector("#topic").value}&lang=${document.querySelector("#lang").value}`;
+    return false;
+}
+
 window.onload = function() {
     var searchParams = new URLSearchParams(window.location.search)
-    var lang = searchParams.get("lang") || "en";
+    lang = searchParams.get("lang") || "en";
     var match = window.location.search.match(/Q\d+/g);
     type = match && match[0] || "Q11344";
 
     statusField = document.getElementById("status");
+
+    populateLanguageOptions();
 
     const typeNameQuery = `
     SELECT ?itemLabel WHERE {

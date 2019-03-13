@@ -13,7 +13,7 @@ body {
     overflow-y: scroll;
 }
 
-h1, p {
+h1, p, form {
     max-width: 60rem;
     margin: auto;
 }
@@ -28,6 +28,24 @@ p {
     line-height: 1.4rem;
     color: #444;
     margin-bottom: 1.1rem;
+}
+
+input, select {
+    height: 3rem;
+    display: inline-block;
+    margin-bottom: 1.1rem;
+}
+
+input[type=text] {
+    font-size: 1rem;
+}
+
+select, input[type=text] {
+    padding: 0 0.5rem;
+}
+
+input[type=submit] {
+    padding: 0 1rem;
 }
 
 a {
