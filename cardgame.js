@@ -398,7 +398,7 @@ window.onload = function() {
         typeLabel = results[0].itemLabel.value;
         setStatus("Generating your "+gameTypeHTML()+" card game... (Fetching data may take a while!)");
 
-        var restriction = "?item (wdt:P31|wdt:P106|wdt:P39)/(wdt:P279*|wdt:P171*) wd:"+type+".";
+        var restriction = `?item (wdt:P31|wdt:P106|wdt:P39)/(wdt:P279*|wdt:P171*) wd:${type}.`;
         runDataQuery(restriction, lang);
     });
 }
