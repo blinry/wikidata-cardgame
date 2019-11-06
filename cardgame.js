@@ -188,7 +188,7 @@ function buildDeck(results) {
             } else {
                 items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: {}};
                 if (line.image) {
-                    items[line.item.value].image = line.image.value.replace('http://', 'https://')+'?width=1280';
+                    items[line.item.value].image = line.image.value.replace('http://', 'https://')+'?width=1000';
                 }else{
                     items[line.item.value].image = 'texture.png';
                 }
