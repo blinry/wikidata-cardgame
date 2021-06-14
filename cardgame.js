@@ -9,9 +9,9 @@ let lang = undefined;
 let imageProgress = 0;
 
 String.prototype.trunc = String.prototype.trunc ||
-      function(n){
-          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
-      };
+    function(n) {
+        return (this.length > n) ? this.substr(0, n - 1) + '&hellip;' : this;
+    };
 
 function setStatus(text) {
     statusField.innerHTML = text;
@@ -21,18 +21,18 @@ function runQuery(query, callback) {
     query = query.replace(/%/g, "%25");
     query = query.replace(/&/g, "%26");
 
-    window.fetch(API_URL+query).then(
-        function (response) {
+    window.fetch(API_URL + query).then(
+        function(response) {
             if (response.status !== 200) {
                 setStatus(`The query took too long or failed. This is probably a bug, let us know! (Status code: ${response.status})`);
                 return;
             }
-            response.json().then(function (data) {
+            response.json().then(function(data) {
                 callback(data.results.bindings);
             });
         }
-    ).catch(function (err) {
-        setStatus('An error occurred while running the query: "'+err+'"');
+    ).catch(function(err) {
+        setStatus('An error occurred while running the query: "' + err + '"');
     });
 }
 
@@ -42,11 +42,11 @@ function preloadImage(url, totalCards) {
         img.src = url;
         img.onload = function() {
             // An imageProgress of -1 indicates an error while async loading one of the images
-            if(imageProgress < 0)
+            if (imageProgress < 0)
                 return;
 
             imageProgress++;
-            setStatus("Preparing your "+gameTypeHTML()+" card game, loading image <b>" + imageProgress + " of "+totalCards+"</b> card images.");
+            setStatus("Preparing your " + gameTypeHTML() + " card game, loading image <b>" + imageProgress + " of " + totalCards + "</b> card images.");
             return resolve();
         };
         img.onerror = function() {
@@ -83,9 +83,9 @@ function formatDate(date, precision) {
     } else if (precision == 9) {
         return date.substring(0, 4);
     } else if (precision == 8) {
-        return date.substring(0, 3)+"0s";
+        return date.substring(0, 3) + "0s";
     } else if (precision == 7) {
-        return ordinal(parseInt(date.substring(0, 2))+1)+" century";
+        return ordinal(parseInt(date.substring(0, 2)) + 1) + " century";
     } else {
         return "a long time ago";
     }
@@ -97,7 +97,7 @@ function number_format(number, decimals, dec_point, thousands_sep) {
         prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
         sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
         dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-        toFixedFix = function (n, prec) {
+        toFixedFix = function(n, prec) {
             // Fix for IE parseFloat(0.55).toFixed(0) = 0;
             var k = Math.pow(10, prec);
             return Math.round(n * k) / k;
@@ -113,20 +113,20 @@ function number_format(number, decimals, dec_point, thousands_sep) {
     return s.join(dec);
 }
 
-function unitSimplify(text){
-    text = text.replace(' per ','/');
+function unitSimplify(text) {
+    text = text.replace(' per ', '/');
 
-    text = text.replace('kilogram','kg');
-    text = text.replace('gram','g');
+    text = text.replace('kilogram', 'kg');
+    text = text.replace('gram', 'g');
 
-    text = text.replace('cubic metre','m^3');
-    text = text.replace('square metre','m^2');
-    text = text.replace('centimetre','cm');
-    text = text.replace('square kilometre','km^2');
-    text = text.replace('kilometre','km');
-    text = text.replace('metre','m');
+    text = text.replace('cubic metre', 'm^3');
+    text = text.replace('square metre', 'm^2');
+    text = text.replace('centimetre', 'cm');
+    text = text.replace('square kilometre', 'km^2');
+    text = text.replace('kilometre', 'km');
+    text = text.replace('metre', 'm');
 
-    text = text.replace('astronomical unit','au');
+    text = text.replace('astronomical unit', 'au');
 
     return text;
 }
@@ -142,7 +142,7 @@ function buildDeck(results) {
         if (line.property.value in propertiesCount) {
             propertiesCount[line.property.value].items.push(line.item.value);
         } else {
-            propertiesCount[line.property.value] = {items: [line.item.value], id: line.property.value, label: line.propertyLabel.value};
+            propertiesCount[line.property.value] = { items: [line.item.value], id: line.property.value, label: line.propertyLabel.value };
         }
     }
 
@@ -156,7 +156,7 @@ function buildDeck(results) {
         propertiesSorted.push([property, propertiesCount[property].items.filter(onlyUnique).length, propertiesCount[property].label]);
     }
 
-    propertiesSorted = propertiesSorted.sort((a,b) => b[1] - a[1]);
+    propertiesSorted = propertiesSorted.sort((a, b) => b[1] - a[1]);
     //propertiesSorted = propertiesSorted.sort((a,b) => Math.random()+0.01);
 
     propertiesSorted = propertiesSorted.slice(0, MAX_PROPERTIES);
@@ -181,22 +181,22 @@ function buildDeck(results) {
                 let decimals = (Math.round(line.valueLabel.value) == +line.valueLabel.value) ? 0 : 2;
                 value = number_format(line.valueLabel.value, decimals, ".", " ");
                 if (line.unitLabel && line.unit.value != "http://www.wikidata.org/entity/Q199") {
-                    value += " "+unitSimplify(line.unitLabel.value); 
+                    value += " " + unitSimplify(line.unitLabel.value);
                 }
             }
             if (line.item.value in items) {
             } else {
-                items[line.item.value] = {item: line.item.value, label: line.itemLabel.value, properties: {}};
+                items[line.item.value] = { item: line.item.value, label: line.itemLabel.value, properties: {} };
                 if (line.image) {
-                    items[line.item.value].image = line.image.value.replace('http://', 'https://')+'?width=1000';
-                }else{
+                    items[line.item.value].image = line.image.value.replace('http://', 'https://') + '?width=1000';
+                } else {
                     items[line.item.value].image = 'texture.png';
                 }
                 if (line.itemDescription) {
                     items[line.item.value].description = line.itemDescription.value;
                 }
             }
-            items[line.item.value].properties[line.propertyLabel.value] = {property: line.propertyLabel.value, value: value};
+            items[line.item.value].properties[line.propertyLabel.value] = { property: line.propertyLabel.value, value: value };
         }
     }
 
@@ -210,7 +210,7 @@ function buildDeck(results) {
         for (let property of propertiesSorted) {
             if (property[2] in i.properties) {
             } else {
-                i.properties[property[2]] = {property: property[2], value: "-"};
+                i.properties[property[2]] = { property: property[2], value: "-" };
             }
             props.push(i.properties[property[2]]);
         }
@@ -219,7 +219,7 @@ function buildDeck(results) {
         it.push(i);
     }
 
-    it.sort((a,b) => b.known_properties - a.known_properties);
+    it.sort((a, b) => b.known_properties - a.known_properties);
     it = it.slice(0, MAX_CARDS);
 
     return it;
@@ -281,7 +281,7 @@ function runDataQuery(restriction, lang) {
             for (let card of deck) {
                 genCardHTML(card);
             }
-            setStatus("Here's your "+gameTypeHTML()+" card game, consisting of "+deck.length+" cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>");
+            setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>");
         }, function(err) {
             imageProgress = -1;
             setStatus("An error occurred while generating the cards: " + err);
@@ -289,7 +289,7 @@ function runDataQuery(restriction, lang) {
     });
 }
 
-function genCardHTML(data){
+function genCardHTML(data) {
     let cardsDiv = document.getElementById("cards");
 
     var link = document.createElement('a');
@@ -297,11 +297,11 @@ function genCardHTML(data){
     cardsDiv.appendChild(link);
 
     var card = document.createElement('div');
-    card.className = 'card'; 
+    card.className = 'card';
 
     link.appendChild(card);
 
-    card.style.backgroundImage = 'url('+data.image+')';
+    card.style.backgroundImage = 'url(' + data.image + ')';
 
 
     var headerdiv = document.createElement('div');
@@ -313,7 +313,7 @@ function genCardHTML(data){
     headerdiv.appendChild(titlediv);
     titlediv.innerHTML = data.label.capitalize();
 
-    if(data.description){
+    if (data.description) {
         var descriptiondiv = document.createElement('div');
         descriptiondiv.className = 'description';
         headerdiv.appendChild(descriptiondiv);
@@ -324,7 +324,7 @@ function genCardHTML(data){
     space.className = 'space';
     card.appendChild(space);
 
-    for(var property in data.properties){
+    for (var property in data.properties) {
         var propdiv = document.createElement('div');
         propdiv.className = 'prop';
         card.appendChild(propdiv);
@@ -341,6 +341,40 @@ function genCardHTML(data){
     qdiv.className = 'qnr';
     card.appendChild(qdiv);
     qdiv.innerHTML = data.item;
+}
+
+function populateTopics() {
+    let select = document.querySelector("select");
+
+    let topics = [
+        "Q1032372",
+        "Q142714",
+        "Q5119",
+        "Q5503",
+        "Q6256",
+        "Q23442",
+        "Q55990535",
+        "Q35273",
+    ]
+
+    const topicQuery = `
+    SELECT ?item ?itemLabel WHERE {
+      VALUES ?item {
+          ${topics.map(t => `wd:${t}`).join(" ")}
+      }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang}". }
+    }
+    `
+    console.log(topicQuery)
+    runQuery(topicQuery, results => {
+        for (let topic of results) {
+            let option = document.createElement("option");
+            option.innerHTML = topic.itemLabel.value
+            option.value = topic.item.value.split("/").pop()
+            select.appendChild(option)
+        }
+        document.querySelector("#topic").value = type;
+    })
 }
 
 function populateLanguageOptions() {
@@ -374,7 +408,7 @@ function populateLanguageOptions() {
 function submitQuery(e) {
     e.preventDefault();
     console.log("hi");
-    window.location = `/?${document.querySelector("#topic").value}&lang=${document.querySelector("#lang").value}`;
+    window.location = `/?${document.querySelector("#topic").value}`;
     return false;
 }
 
@@ -386,7 +420,8 @@ window.onload = function() {
 
     statusField = document.getElementById("status");
 
-    populateLanguageOptions();
+    //populateLanguageOptions();
+    populateTopics();
 
     const typeNameQuery = `
     SELECT ?itemLabel WHERE {
@@ -396,7 +431,7 @@ window.onload = function() {
     `;
     runQuery(typeNameQuery, results => {
         typeLabel = results[0].itemLabel.value;
-        setStatus("Generating your "+gameTypeHTML()+" card game... (Fetching data may take a while!)");
+        setStatus("Generating your " + gameTypeHTML() + " card game... (Fetching data may take a while!)");
 
         var restriction = `?item (wdt:P31|wdt:P106|wdt:P39)/(wdt:P279*|wdt:P171*) wd:${type}.`;
         runDataQuery(restriction, lang);
