@@ -17,6 +17,40 @@ function setStatus(text) {
     statusField.innerHTML = text;
 }
 
+function getSuggestions(value){
+    console.log(value);
+    let qid = value.match(/Q\d+/)
+    if( qid ){
+        window.location = `/?${qid[0]}`;
+    }else{
+        window.fetch(`https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&search=${value}&language=${lang}&uselang=${lang}&origin=*`)
+        .then( response => {
+            response.json().then(function(data) {
+                let datalist = document.getElementById("suggestions");
+                datalist.innerHTML = "";
+
+                for(let item of data.search){
+                    addOption(item.label, item.id, item.description)
+                }
+                console.log(data);
+            });
+        } );
+    }
+
+}
+
+function addOption(label, id, description){
+    let datalist = document.getElementById("suggestions");
+    let option = document.createElement("option");
+
+    let descText = ""
+    if(description){
+        descText = `${description}, `
+    }
+    option.value = `${label} (${descText}${id})`
+    datalist.appendChild(option)
+}
+
 function runQuery(query, callback) {
     query = query.replace(/%/g, "%25");
     query = query.replace(/&/g, "%26");
@@ -238,7 +272,7 @@ function runDataQuery(restriction, lang) {
     WHERE {
       INCLUDE %items.
 
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang}". }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang},en". }
 
       OPTIONAL { ?item wdt:P18 ?image. }
 
@@ -353,12 +387,11 @@ function populateTopics() {
         "Q5503",
         "Q6256",
         "Q23442",
-        "Q55990535",
         "Q35273",
     ]
 
     const topicQuery = `
-    SELECT ?item ?itemLabel WHERE {
+    SELECT ?item ?itemLabel ?itemDescription WHERE {
       VALUES ?item {
           ${topics.map(t => `wd:${t}`).join(" ")}
       }
@@ -368,10 +401,11 @@ function populateTopics() {
     console.log(topicQuery)
     runQuery(topicQuery, results => {
         for (let topic of results) {
-            let option = document.createElement("option");
+            /*let option = document.createElement("option");
             option.innerHTML = topic.itemLabel.value
             option.value = topic.item.value.split("/").pop()
-            select.appendChild(option)
+            select.appendChild(option)*/
+            addOption(topic.itemLabel.value, topic.item.value.split("/").pop(), null)
         }
         document.querySelector("#topic").value = type;
     })
@@ -414,7 +448,7 @@ function submitQuery(e) {
 
 window.onload = function() {
     var searchParams = new URLSearchParams(window.location.search)
-    lang = searchParams.get("lang") || "en";
+    lang = searchParams.get("lang") || "ko";
     var match = window.location.search.match(/Q\d+/g);
     type = match && match[0] || "Q11344";
 

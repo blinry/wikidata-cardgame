@@ -21,9 +21,10 @@
 
         <form onsubmit="return submitQuery(event)">
             <!--<input id="topic" type="text" name="topic"">-->
-            <select id="topic" name="topic"></select>
+            <input type="text" list="suggestions" id="suggestion-input" oninput="getSuggestions(this.value)" autocomplete="off">
+            <datalist id="suggestions"></datalist>
             <!--<select id="lang" name="lang"></select>-->
-            <input type="submit" value="Generate">
+
         </form>
 
         <!--<p>Here are some other topics you can try:

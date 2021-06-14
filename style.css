@@ -34,6 +34,7 @@ input, select {
     height: 3rem;
     display: inline-block;
     margin-bottom: 1.1rem;
+    width: 40rem;
 }
 
 input[type=text] {
