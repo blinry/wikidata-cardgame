@@ -315,7 +315,7 @@ function runDataQuery(restriction, lang) {
             for (let card of deck) {
                 genCardHTML(card);
             }
-            setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards. <a href=\"javascript:window.print()\" class=\"button\">Print them?</a>");
+            setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards.");
         }, function(err) {
             imageProgress = -1;
             setStatus("An error occurred while generating the cards: " + err);
@@ -327,7 +327,7 @@ function genCardHTML(data) {
     let cardsDiv = document.getElementById("cards");
 
     var link = document.createElement('a');
-    link.href = data.item;
+
     cardsDiv.appendChild(link);
 
     var card = document.createElement('div');
