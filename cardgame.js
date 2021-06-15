@@ -58,7 +58,7 @@ function runQuery(query, callback) {
     window.fetch(API_URL + query).then(
         function(response) {
             if (response.status !== 200) {
-                setStatus(`The query took too long or failed. This is probably a bug, let us know! (Status code: ${response.status})`);
+                setStatus(`The query took too long or failed. Please try again with a different topic.`);
                 return;
             }
             response.json().then(function(data) {
@@ -315,7 +315,11 @@ function runDataQuery(restriction, lang) {
             for (let card of deck) {
                 genCardHTML(card);
             }
-            setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards.");
+            if (deck.length == 0) {
+                setStatus("Didn't find enough information for a " + gameTypeHTML() + " card game. Please try a different topic.");
+            } else {
+                setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards.");
+            }
         }, function(err) {
             imageProgress = -1;
             setStatus("An error occurred while generating the cards: " + err);
@@ -381,9 +385,10 @@ function populateTopics() {
     let select = document.querySelector("select");
 
     let topics = [
+        "Q5119",
+        "Q11344",
         "Q1032372",
         "Q142714",
-        "Q5119",
         "Q5503",
         "Q6256",
         "Q23442",

@@ -22,10 +22,11 @@ h1, p, form {
 h1 {
     font-size: 3.5rem;
     font-family: Lobster, cursive;
+    margin-bottom: 3rem;
 }
 
 p {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     line-height: 1.4rem;
     color: #444;
     margin-bottom: 1.1rem;
