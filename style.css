@@ -82,6 +82,13 @@ a.id {
     border-radius: 0.2rem;
 }
 
+a.id:hover {
+    background: #366d36;
+    color: white;
+    padding: 0.2rem;
+    border-radius: 0.2rem;
+}
+
 #cards {
     display: flex;
     flex-wrap: wrap;
@@ -198,6 +205,19 @@ a:hover .card {
 
 .description {
     font-size: 60%;
+}
+
+#buttons{
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-evenly;
+    padding-bottom: 6vh;
+    font-size: 1.5rem;
+}
+
+#buttons>a{
+    
 }
 
 #cards a {

@@ -39,6 +39,16 @@ function getSuggestions(value){
 
 }
 
+function addButton(label, id){
+    let buttondiv = document.getElementById("buttons");
+    let btn = document.createElement("a");
+
+    btn.innerHTML = label
+    btn.href = `/?${id}`
+    btn.classList.add("id")
+    buttondiv.appendChild(btn)
+}
+
 function addOption(label, id, description){
     let datalist = document.getElementById("suggestions");
     let option = document.createElement("option");
@@ -410,7 +420,9 @@ function populateTopics() {
             option.innerHTML = topic.itemLabel.value
             option.value = topic.item.value.split("/").pop()
             select.appendChild(option)*/
-            addOption(topic.itemLabel.value, topic.item.value.split("/").pop(), null)
+            let topicID = topic.item.value.split("/").pop()
+            addOption(topic.itemLabel.value, topicID, null)
+            addButton(topic.itemLabel.value, topicID)
         }
         document.querySelector("#topic").value = type;
     })
