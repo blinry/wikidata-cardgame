@@ -215,6 +215,21 @@ function buildDeck(results) {
     propertiesSorted = propertiesSorted.sort((a, b) => b[1] - a[1]);
     //propertiesSorted = propertiesSorted.sort((a,b) => Math.random()+0.01);
 
+    // Step 1b: When there are reduntant properties, remove the one with fewer occurrences.
+    var redundantProperties = [
+        ["P571", "P2031"], // inception and work period (start)
+        ["P1317", "P2031"], // floruit and work period (start)
+        ["P576", "P2032"], // dissolved and work period (end)
+    ]
+    for (pair of redundantProperties) {
+        var firstIndex = propertiesSorted.findIndex(e => e[0].split("/").pop() == pair[0])
+        var secondIndex = propertiesSorted.findIndex(e => e[0].split("/").pop() == pair[1])
+        if (firstIndex != -1 && secondIndex != -1) {
+            propertiesSorted.splice(Math.max(firstIndex, secondIndex), 1)
+        }
+    }
+
+    // Only keep n best properties
     propertiesSorted = propertiesSorted.slice(0, MAX_PROPERTIES);
 
     // Step 2: Get items which as many of these properties as possible.
@@ -506,7 +521,7 @@ window.onload = function() {
     const typeNameQuery = `
     SELECT ?itemLabel WHERE {
       BIND(wd:${type} as ?item)
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang}". }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "${lang},en". }
     }
     `;
     runQuery(typeNameQuery, results => {

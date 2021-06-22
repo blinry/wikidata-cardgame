@@ -253,7 +253,7 @@ a:hover .card {
         margin: 10mm 7mm;
     }
 
-    h1, p, form {
+    h1, p, form, #buttons {
         display: none;
     }
 }
