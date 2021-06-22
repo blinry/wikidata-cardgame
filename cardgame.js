@@ -68,7 +68,8 @@ function runQuery(query, callback) {
     window.fetch(API_URL + query).then(
         function(response) {
             if (response.status !== 200) {
-                setStatus(`The query took too long or failed. Please try again with a different topic.`);
+                //setStatus(`The query took too long or failed. Please try again with a different topic.`);
+                setStatus("처리에 실패했습니다. 다른 검색어로 다시 시도해주세요.")
                 return;
             }
             response.json().then(function(data) {
@@ -90,7 +91,8 @@ function preloadImage(url, totalCards) {
                 return;
 
             imageProgress++;
-            setStatus("Preparing your " + gameTypeHTML() + " card game, loading image <b>" + imageProgress + " of " + totalCards + "</b> card images.");
+            //setStatus("Preparing your " + gameTypeHTML() + " card game, loading image <b>" + imageProgress + " of " + totalCards + "</b> card images.");
+            setStatus("선택하신 "+gameTypeHTML()+"에 해당하는 카드 게임 준비 중입니다. 이미지 <b>"+totalCards+"개 중 "+imageProgress+"개</b> 완료되었습니다.")
             return resolve();
         };
         img.onerror = function() {
@@ -326,9 +328,11 @@ function runDataQuery(restriction, lang) {
                 genCardHTML(card);
             }
             if (deck.length == 0) {
-                setStatus("Didn't find enough information for a " + gameTypeHTML() + " card game. Please try a different topic.");
+                //setStatus("Didn't find enough information for a " + gameTypeHTML() + " card game. Please try a different topic.");
+                setStatus("카드 게임을 위한 충분한 정보를 찾지 못했습니다. 다른 "+gameTypeHTML()+"를 입력해주세요.")
             } else {
-                setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards.");
+                //setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards.");
+                setStatus("여기 "+deck.length+"개의 카드로 구성된 "+gameTypeHTML()+"의 카드가 생성되었습니다.")
             }
         }, function(err) {
             imageProgress = -1;
@@ -482,7 +486,8 @@ window.onload = function() {
     `;
     runQuery(typeNameQuery, results => {
         typeLabel = results[0].itemLabel.value;
-        setStatus("Generating your " + gameTypeHTML() + " card game... (Fetching data may take a while!)");
+        //setStatus("Generating your " + gameTypeHTML() + " card game... (Fetching data may take a while!)");
+        setStatus("카드 " + gameTypeHTML() + "의 게임 생성 중입니다... (데이터를 불러오는 데 시간이 걸릴 수 있습니다!)")
 
         var restriction = `?item (wdt:P31|wdt:P106|wdt:P39)/(wdt:P279*|wdt:P171*) wd:${type}.`;
         runDataQuery(restriction, lang);

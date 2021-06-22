@@ -13,35 +13,17 @@
     <body>
         <h1>Wikidata Card Game Generator</h1>
 
-        <p>Choose one of those topics to generate a new card game!</p>
-
-        <div id="buttons"></div>
-
-        <p>Or try out your own topic ideas:</p>
+        <!--<p>Type in any topic to generate a new card game!</p>-->
+        <p>새로운 카드 게임을 생성하려면 검색어를 입력해주세요!</p>
 
         <form onsubmit="return submitQuery(event)">
             <!--<input id="topic" type="text" name="topic"">-->
             <input type="text" list="suggestions" id="suggestion-input" oninput="getSuggestions(this.value)" autocomplete="off">
             <datalist id="suggestions"></datalist>
             <!--<select id="lang" name="lang"></select>-->
-
         </form>
 
-        <!--<p>Here are some other topics you can try:
-            <a href="?Q5119">capital</a>,
-            <a href="?Q5503">metro system</a>,
-            <a href="?Q6256">country</a>,
-            <a href="?Q6999">astronomical body</a>,
-            <a href="?Q23442">island</a>,
-            <a href="?Q1032372">hackerspace</a>,
-            <a href="?Q55990535">computer model</a>,
-            <a href="?Q35273">telescope</a>,
-            <a href="?Q142714">card game</a>.
-        </p>
-
-        <p>How does this work? We fetch items from Wikidata which are instances of arbitrary subclasses of the topic provided in the URL. We'll then find the properties which occur most often, and select the 32 cards which have as many of these as possible filled in. If your card is missing data or images, why don't you <a href="https://www.wikidata.org/wiki/Wikidata:Introduction">add that information</a> to Wikidata? :)</p>
-
-        <p>Made for the <a href="https://de.wikipedia.org/wiki/Wikipedia:Wikidata-Workshop-Ulm-2019">Wikidata-Workshop 2019</a> in Ulm by <a href="https://www.bleeptrack.de">bleeptrack</a> and <a href="https://morr.cc">blinry</a>. Source code is <a href="https://github.com/blinry/wikidata-cardgame">on GitHub</a>, feel free to suggest ideas or report bugs!</p> -->
+        <div id="buttons"></div>
 
         <p id="status"></p>
 
