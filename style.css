@@ -19,6 +19,10 @@ h1, p, form {
     text-align: center;
 }
 
+form {
+    margin-bottom: 4rem;
+}
+
 h1 {
     font-size: 3.5rem;
     font-family: Lobster, cursive;
@@ -208,16 +212,16 @@ a:hover .card {
 }
 
 #buttons{
-    width: 50%;
     margin: 0 auto;
     display: flex;
-    justify-content: space-evenly;
-    padding-bottom: 6vh;
+    justify-content: center;
+    padding-bottom: 2rem;
     font-size: 1.5rem;
+    flex-wrap: wrap;
 }
 
 #buttons>a{
-    
+    margin: 0.5rem;
 }
 
 #cards a {
