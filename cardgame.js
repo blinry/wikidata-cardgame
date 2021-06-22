@@ -17,11 +17,15 @@ function setStatus(text) {
     statusField.innerHTML = text;
 }
 
+function setLang(newLang){
+    window.location = `/?${type}&lang=${newLang}`
+}
+
 function getSuggestions(value){
     console.log(value);
     let qid = value.match(/Q\d+/)
     if( qid ){
-        window.location = `/?${qid[0]}`;
+        window.location = `/?${qid[0]}&lang=${lang}`;
     }else{
         window.fetch(`https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&search=${value}&language=${lang}&uselang=${lang}&origin=*`)
         .then( response => {
@@ -44,7 +48,7 @@ function addButton(label, id){
     let btn = document.createElement("a");
 
     btn.innerHTML = label
-    btn.href = `/?${id}`
+    btn.href = `/?${id}&lang=${lang}`
     btn.classList.add("id")
     buttondiv.appendChild(btn)
 }
@@ -68,8 +72,11 @@ function runQuery(query, callback) {
     window.fetch(API_URL + query).then(
         function(response) {
             if (response.status !== 200) {
-                //setStatus(`The query took too long or failed. Please try again with a different topic.`);
-                setStatus("처리에 실패했습니다. 다른 검색어로 다시 시도해주세요.")
+                if (lang == "ko") {
+                    setStatus("처리에 실패했습니다. 다른 검색어로 다시 시도해주세요.")
+                } else {
+                    setStatus(`The query took too long or failed. Please try again with a different topic.`);
+                }
                 return;
             }
             response.json().then(function(data) {
@@ -91,8 +98,11 @@ function preloadImage(url, totalCards) {
                 return;
 
             imageProgress++;
-            //setStatus("Preparing your " + gameTypeHTML() + " card game, loading image <b>" + imageProgress + " of " + totalCards + "</b> card images.");
-            setStatus("선택하신 "+gameTypeHTML()+"에 해당하는 카드 게임 준비 중입니다. 이미지 <b>"+totalCards+"개 중 "+imageProgress+"개</b> 완료되었습니다.")
+            if (lang == "ko") {
+                setStatus("선택하신 "+gameTypeHTML()+"에 해당하는 카드 게임 준비 중입니다. 이미지 <b>"+totalCards+"개 중 "+imageProgress+"개</b> 완료되었습니다.")
+            } else {
+                setStatus("Preparing your " + gameTypeHTML() + " card game, loading image <b>" + imageProgress + " of " + totalCards + "</b> card images.");
+            }
             return resolve();
         };
         img.onerror = function() {
@@ -178,7 +188,7 @@ function unitSimplify(text) {
 }
 
 function gameTypeHTML() {
-    return `<a href="https://www.wikidata.org/wiki/${type}" class="id">${typeLabel}</a>`;
+    return `<a class="id">${typeLabel}</a>`;
 }
 
 function buildDeck(results) {
@@ -328,11 +338,17 @@ function runDataQuery(restriction, lang) {
                 genCardHTML(card);
             }
             if (deck.length == 0) {
-                //setStatus("Didn't find enough information for a " + gameTypeHTML() + " card game. Please try a different topic.");
-                setStatus("카드 게임을 위한 충분한 정보를 찾지 못했습니다. 다른 "+gameTypeHTML()+"를 입력해주세요.")
+                if (lang == "ko") {
+                    setStatus("카드 게임을 위한 충분한 정보를 찾지 못했습니다. 다른 "+gameTypeHTML()+"를 입력해주세요.")
+                } else {
+                    setStatus("Didn't find enough information for a " + gameTypeHTML() + " card game. Please try a different topic.");
+                }
             } else {
-                //setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards.");
-                setStatus("여기 "+deck.length+"개의 카드로 구성된 "+gameTypeHTML()+"의 카드가 생성되었습니다.")
+                if (lang == "ko") {
+                    setStatus("여기 "+deck.length+"개의 카드로 구성된 "+gameTypeHTML()+"의 카드가 생성되었습니다.")
+                } else {
+                    setStatus("Here's your " + gameTypeHTML() + " card game, consisting of " + deck.length + " cards.");
+                }
             }
         }, function(err) {
             imageProgress = -1;
@@ -419,6 +435,8 @@ function populateTopics() {
     `
     console.log(topicQuery)
     runQuery(topicQuery, results => {
+        document.querySelector("#suggestions").innerHTML = ""
+        document.querySelector("#buttons").innerHTML = ""
         for (let topic of results) {
             /*let option = document.createElement("option");
             option.innerHTML = topic.itemLabel.value
@@ -428,15 +446,18 @@ function populateTopics() {
             addOption(topic.itemLabel.value, topicID, null)
             addButton(topic.itemLabel.value, topicID)
         }
-        document.querySelector("#topic").value = type;
     })
 }
 
 function populateLanguageOptions() {
-    const langQuery = `
+    /*const langQuery = `
     SELECT ?item ?code ?itemLabel (GROUP_CONCAT(?nativeLabel;separator="/") as ?nativeLabels) WHERE {
       ?item wdt:P424 ?code.
       ?item wdt:P1705 ?nativeLabel.
+
+      VALUES ?item {
+
+      }
 
       MINUS { ?item (wdt:P31/wdt:P279*) wd:Q14827288. }
       MINUS { ?item (wdt:P31/wdt:P279*) wd:Q17442446. }
@@ -446,24 +467,28 @@ function populateLanguageOptions() {
     }
     GROUP BY ?item ?code ?itemLabel
     ORDER BY ?itemLabel
-    `;
-    runQuery(langQuery, results => {
-        let select = document.querySelector("select");
-        for (let line of results) {
-            let option = document.createElement("option");
-            option.innerHTML = `${line.itemLabel.value} (${line.code.value}) – ${line.nativeLabels.value}`.trunc(40);
-            option.value = line.code.value;
-            select.appendChild(option);
-        }
-        document.querySelector("#topic").value = type;
-        document.querySelector("#lang").value = lang;
-    });
+    `;*/
+
+    var results = [
+        {itemLabel: {value: "한국어 (Korean)"}, code: {value: "ko"}},
+        {itemLabel: {value: "영어 (English)"}, code: {value: "en"}}
+    ]
+
+    let select = document.querySelector("select");
+    for (let line of results) {
+        let option = document.createElement("option");
+        option.innerHTML = `${line.itemLabel.value}`.trunc(40);
+        option.value = line.code.value;
+        select.appendChild(option);
+    }
+    //document.querySelector("#topic").value = type;
+    document.querySelector("#lang").value = lang;
 }
 
 function submitQuery(e) {
     e.preventDefault();
     console.log("hi");
-    window.location = `/?${document.querySelector("#topic").value}`;
+    window.location = `/?${document.querySelector("#topic").value}&lang=${lang}`;
     return false;
 }
 
@@ -475,7 +500,7 @@ window.onload = function() {
 
     statusField = document.getElementById("status");
 
-    //populateLanguageOptions();
+    populateLanguageOptions();
     populateTopics();
 
     const typeNameQuery = `
@@ -486,8 +511,11 @@ window.onload = function() {
     `;
     runQuery(typeNameQuery, results => {
         typeLabel = results[0].itemLabel.value;
-        //setStatus("Generating your " + gameTypeHTML() + " card game... (Fetching data may take a while!)");
-        setStatus("카드 " + gameTypeHTML() + "의 게임 생성 중입니다... (데이터를 불러오는 데 시간이 걸릴 수 있습니다!)")
+        if (lang == "ko") {
+            setStatus("카드 " + gameTypeHTML() + "의 게임 생성 중입니다... (데이터를 불러오는 데 시간이 걸릴 수 있습니다!)")
+        } else {
+            setStatus("Generating your " + gameTypeHTML() + " card game... (Fetching data may take a while!)");
+        }
 
         var restriction = `?item (wdt:P31|wdt:P106|wdt:P39)/(wdt:P279*|wdt:P171*) wd:${type}.`;
         runDataQuery(restriction, lang);

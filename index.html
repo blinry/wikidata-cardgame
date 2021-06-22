@@ -13,14 +13,13 @@
     <body>
         <h1>Wikidata Card Game Generator</h1>
 
-        <!--<p>Type in any topic to generate a new card game!</p>-->
         <p>새로운 카드 게임을 생성하려면 검색어를 입력해주세요!</p>
+        <p>Type in any topic to generate a new card game!</p>
 
         <form onsubmit="return submitQuery(event)">
-            <!--<input id="topic" type="text" name="topic"">-->
+            <select id="lang" name="lang" onchange="setLang(this.value)"></select>
             <input type="text" list="suggestions" id="suggestion-input" oninput="getSuggestions(this.value)" autocomplete="off">
             <datalist id="suggestions"></datalist>
-            <!--<select id="lang" name="lang"></select>-->
         </form>
 
         <div id="buttons"></div>

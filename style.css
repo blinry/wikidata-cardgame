@@ -19,6 +19,10 @@ h1, p, form {
     text-align: center;
 }
 
+form {
+    margin-top: 3rem;
+}
+
 h1 {
     font-size: 3.5rem;
     font-family: Lobster, cursive;
@@ -36,10 +40,14 @@ input, select {
     height: 3rem;
     display: inline-block;
     margin-bottom: 1.1rem;
-    width: 40rem;
+}
+
+select {
+    width: 9rem;
 }
 
 input[type=text] {
+    width: 40rem;
     font-size: 1rem;
 }
 
